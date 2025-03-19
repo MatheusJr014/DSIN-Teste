@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password')->nullable(); 
             $table->string('userphone')->nullable(); 
             $table->string('userstatus')->nullable(); 
+            
             $table->timestamps();
          
         });
