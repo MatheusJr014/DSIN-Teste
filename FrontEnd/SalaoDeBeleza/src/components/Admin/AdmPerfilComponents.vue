@@ -1,47 +1,5 @@
 <template>
     <div class="client-profile">
-      <!-- Navigation -->
-      <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-          <a class="navbar-brand d-flex align-items-center" href="#">
-            <scissors-icon class="me-2 text-primary" size="24" />
-            <span class="fw-bold">BeautyTime</span>
-          </a>
-          <button class="navbar-toggler" type="button" @click="isNavOpen = !isNavOpen">
-            <menu-icon v-if="!isNavOpen" />
-            <x-icon v-else />
-          </button>
-          <div class="collapse navbar-collapse" :class="{ 'show': isNavOpen }">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Services</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Book</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <img src="https://placehold.co/100/f8f9fa/6c757d?text=JS" alt="Profile" class="rounded-circle me-2" width="32" height="32">
-                  <span>Jane Smith</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item active" href="#">My Profile</a></li>
-                  <li><a class="dropdown-item" href="#">My Appointments</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Logout</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-  
       <!-- Main Content -->
       <div class="container py-5">
         <div class="row">
