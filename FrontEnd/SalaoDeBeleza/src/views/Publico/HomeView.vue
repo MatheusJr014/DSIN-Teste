@@ -8,9 +8,9 @@
   
   
   <script>
-  import FooterComponents from '@/components/Publico/FooterComponents.vue';
-  import NavBarComponents from '@/components/Publico/NavbarComponents.vue';
-  import PageComponents from '@/components/Publico/PageComponents.vue';
+  import FooterComponents from '@/components/Publico/Home/FooterComponents.vue';
+  import NavBarComponents from '@/components/Publico/Home/NavbarComponents.vue';
+  import PageComponents from '@/components/Publico/Home/PageComponents.vue';
   export default {
     components:{
       NavBarComponents,

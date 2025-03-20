@@ -5,7 +5,7 @@
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#">
           <scissors-icon class="me-2 text-primary" size="24" />
-          <span class="fw-bold">BeautyTime</span>
+          <span class="fw-bold">Leila Beauty</span>
         </a>
         <button class="navbar-toggler" type="button" @click="isNavOpen = !isNavOpen">
           <menu-icon v-if="!isNavOpen" />
@@ -17,13 +17,13 @@
               <a class="nav-link" href="#" @click="activeSection = 'home'">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#services" @click="activeSection = 'services'">Services</a>
+              <a class="nav-link" href="#services" @click="activeSection = 'services'">Serviços</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#about" @click="activeSection = 'about'">About</a>
+              <a class="nav-link" href="#about" @click="activeSection = 'about'">Sobre</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#contact" @click="activeSection = 'contact'">Contact</a>
+              <a class="nav-link" href="#contact" @click="activeSection = 'contact'">Contato</a>
             </li>
             <li class="nav-item ms-lg-3">
               <button 

@@ -8,7 +8,7 @@
   
   <script>
   
-  import NavBarComponents from '@/components/Publico/NavbarComponents.vue';
+  import NavBarComponents from '@/components/Publico/Home/NavbarComponents.vue';
   import PerfilComponents from '@/components/Cliente/PerfilComponents.vue';
   export default {
     components:{
