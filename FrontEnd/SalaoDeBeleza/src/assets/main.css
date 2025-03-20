@@ -1,35 +1,64 @@
-@import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #F8F9FA
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
+.logo{
     display: flex;
-    place-items: center;
+    align-items: center;
+    color: #34e7f8;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.logo i{
+    color: var(--main-color);
+    font-size: 32px;
+    margin-right: 5px;
+    
+}
+
+.logo span{
+    color: #fff;
+}
+
+.form-label {
+    font-weight: bold;
+    font-size: large;
+}
+
+.form-wrapper {
+    max-width: 600px; 
+    margin: 0 auto; 
+    padding: 20px;
+  } 
+
+.title {
+    text-align: center;
+    color: #000000;
+}
+
+.form-label {
+    color: #000000;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
   }
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+.line-title {
+    border-top: 8px solid #34e7f8; 
+    margin-bottom: 20px;
+    margin-top: 0px;
+}
+
+.cart-img {
+    width: 50px;
+    position: fixed;
+    right: 15px;
+    top: 10px;
 }
