@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/users/login', [UserController::class, 'login_user']);
 Route::get('/users', [UserController::class, 'index'])->name('api.users.index');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('api.users.update');
 
 Route::post('/users', [UserController::class, 'create'])->name('api.users.create');
 
