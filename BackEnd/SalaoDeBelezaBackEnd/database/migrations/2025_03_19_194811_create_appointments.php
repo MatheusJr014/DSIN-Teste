@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->string('aappointmentstype')->nullable();
+            $table->string('appointmentstype')->nullable();
             $table->boolean('appointmentsstatus')->nullable();
             $table->integer('appointmentsorder')->nullable(); 
             $table->string('appointmentsclientid')->nullable(); 
             $table->string('appointmentsservice')->nullable();
             $table->boolean('appointmentsterm')->nullable();
             $table->date('appointmentdate')->nullable();
+            
             $table->timestamps();
         });
     }

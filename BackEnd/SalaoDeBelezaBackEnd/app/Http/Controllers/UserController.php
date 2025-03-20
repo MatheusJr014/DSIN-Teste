@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginUsers;
 use App\Models\Users;
 use Illuminate\Http\Request;
 
@@ -42,7 +43,7 @@ class UserController extends Controller
             'username' => $data['username'],
             'usercpf' => $data['usercpf'], 
             'useremail' => $data['useremail'], 
-            'password' => $data['password'], 
+            'password' => bcrypt($data['password']), 
             'userphone' => $data['userphone'], 
             'userstatus' => $data['userstatus']
 
@@ -51,12 +52,22 @@ class UserController extends Controller
         return response()->json(['message'=> 'Cadastro realizado com sucesso!'], 201); 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function login_user(LoginUsers $request){
+        $input = $request -> validated(); 
+        $credentials = [
+            'useremail' => $input['useremail'],
+            'password' => $input['password'],
+        ];
+
+        if(!$token = auth('users')->attempt($credentials)){
+            return response()->json(['error' => 'Unauthorized'], 401); 
+        };
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'role' => 'admin'
+        ]);
     }
 
     /**
