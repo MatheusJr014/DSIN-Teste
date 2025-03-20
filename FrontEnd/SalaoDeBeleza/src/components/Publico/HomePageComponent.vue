@@ -1,48 +1,6 @@
 <template>
   <div class="salon-app">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="#">
-          <scissors-icon class="me-2 text-primary" size="24" />
-          <span class="fw-bold">BeautyTime</span>
-        </a>
-        <button class="navbar-toggler" type="button" @click="isNavOpen = !isNavOpen">
-          <menu-icon v-if="!isNavOpen" />
-          <x-icon v-else />
-        </button>
-        <div class="collapse navbar-collapse" :class="{ 'show': isNavOpen }">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="#" @click="activeSection = 'home'">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#services" @click="activeSection = 'services'">Services</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#about" @click="activeSection = 'about'">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#contact" @click="activeSection = 'contact'">Contact</a>
-            </li>
-            <li class="nav-item ms-lg-3">
-              <button 
-                class="btn btn-outline-primary" 
-                @click="showLoginModal = true" 
-                v-if="!isLoggedIn">
-                Login
-              </button>
-              <button 
-                class="btn btn-primary" 
-                @click="showAppointmentModal = true" 
-                v-else>
-                Book Appointment
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    
 
     <!-- Hero Section -->
     <section class="hero py-5 bg-light">
@@ -229,61 +187,7 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-lg-4">
-            <div class="d-flex align-items-center mb-3">
-              <scissors-icon class="me-2" size="24" />
-              <span class="fw-bold fs-4">BeautyTime</span>
-            </div>
-            <p>Your destination for beauty and relaxation.</p>
-            <div class="d-flex gap-3">
-              <a href="#" class="text-white">
-                <facebook-icon />
-              </a>
-              <a href="#" class="text-white">
-                <instagram-icon />
-              </a>
-              <a href="#" class="text-white">
-                <twitter-icon />
-              </a>
-            </div>
-          </div>
-          <div class="col-lg-2 col-md-4">
-            <h5 class="fw-bold mb-3">Quick Links</h5>
-            <ul class="list-unstyled">
-              <li class="mb-2"><a href="#" class="text-decoration-none text-white-50">Home</a></li>
-              <li class="mb-2"><a href="#services" class="text-decoration-none text-white-50">Services</a></li>
-              <li class="mb-2"><a href="#about" class="text-decoration-none text-white-50">About</a></li>
-              <li><a href="#contact" class="text-decoration-none text-white-50">Contact</a></li>
-            </ul>
-          </div>
-          <div class="col-lg-2 col-md-4">
-            <h5 class="fw-bold mb-3">Services</h5>
-            <ul class="list-unstyled">
-              <li class="mb-2"><a href="#" class="text-decoration-none text-white-50">Hair Styling</a></li>
-              <li class="mb-2"><a href="#" class="text-decoration-none text-white-50">Makeup</a></li>
-              <li class="mb-2"><a href="#" class="text-decoration-none text-white-50">Manicure</a></li>
-              <li><a href="#" class="text-decoration-none text-white-50">Facial</a></li>
-            </ul>
-          </div>
-          <div class="col-lg-4 col-md-4">
-            <h5 class="fw-bold mb-3">Newsletter</h5>
-            <p>Subscribe to get updates on our latest offers and services.</p>
-            <div class="input-group mb-3">
-              <input type="email" class="form-control" placeholder="Your email">
-              <button class="btn btn-primary" type="button">Subscribe</button>
-            </div>
-          </div>
-        </div>
-        <hr class="my-4">
-        <div class="text-center text-white-50">
-          <p class="mb-0">&copy; {{ new Date().getFullYear() }} BeautyTime. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+    
 
     <!-- Login Modal -->
     <div class="modal fade" :class="{ 'show d-block': showLoginModal }" tabindex="-1">
