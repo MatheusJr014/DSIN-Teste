@@ -140,7 +140,7 @@ export default {
 
                 if (token) {
                     const decoded = jwtDecode(token);
-                    const role = decoded.role; // Obtém o role do payload do token
+                    const role = decoded.role; 
 
                     localStorage.setItem('token', token);
                     localStorage.setItem('role', role);
@@ -152,13 +152,13 @@ export default {
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        // Redireciona baseado no papel do usuário
+
                         if (role === 'admin') {
                             this.$router.push('/user/admin');
                         } else if (role === 'cliente') {
                             this.$router.push('/user/cliente');
                         } else {
-                            this.$router.push('/dashboard'); // Rota padrão caso role seja desconhecido
+                            this.$router.push('/dashboard');
                         }
                     });
                 } else {
