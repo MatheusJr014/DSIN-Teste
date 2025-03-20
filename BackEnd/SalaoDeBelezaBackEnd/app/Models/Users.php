@@ -23,7 +23,8 @@ class Users extends Authenticatable implements JWTSubject
         'password', 
         'userphone', 
         'usercreationdate',
-        'userstatus'
+        'userstatus',
+        'role'
     ];
 
     public function getAuthPassword(){
