@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,7 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::post('/users/login', [UserController::class, 'login_user']);
 Route::get('/users', [UserController::class, 'index'])->name('api.users.index');
 
 Route::post('/users', [UserController::class, 'create'])->name('api.users.create');
+
+
+
+Route::get('/appointments', [AppointmentsController::class, 'index'])->name('api.appointments.index');
+
+Route::post('/appointments', [AppointmentsController::class, 'create'])->name('api.appointments.create');

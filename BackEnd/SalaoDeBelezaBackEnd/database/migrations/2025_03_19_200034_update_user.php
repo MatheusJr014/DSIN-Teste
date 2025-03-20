@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('cliente'); // Adiciona a coluna com valor padrão
+            $table->string('role')->default("cliente"); // Adiciona a coluna com valor padrão
                  
         });
     }
