@@ -186,81 +186,6 @@
           </div>
         </div>
       </section>
-  
-      
-  
-      <!-- Login Modal -->
-      <div class="modal fade" :class="{ 'show d-block': showLoginModal }" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fw-bold">{{ isRegister ? 'Create Account' : 'Login' }}</h5>
-              <button type="button" class="btn-close" @click="showLoginModal = false"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="handleLogin">
-                <div class="mb-3" v-if="isRegister">
-                  <label for="registerName" class="form-label">Full Name</label>
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    id="registerName" 
-                    v-model="registerForm.name" 
-                    required
-                  >
-                </div>
-                <div class="mb-3">
-                  <label for="loginEmail" class="form-label">Email address</label>
-                  <!-- <input 
-                    type="email" 
-                    class="form-control" 
-                    id="loginEmail" 
-                    v-model="isRegister ? registerForm.email : loginForm.email" 
-                    required
-                  > -->
-                </div>
-                <div class="mb-3">
-                  <label for="loginPassword" class="form-label">Password</label>
-                  <!-- <input 
-                    type="password" 
-                    class="form-control" 
-                    id="loginPassword" 
-                    v-model="isRegister ? registerForm.password : loginForm.password" 
-                    required
-                  > -->
-                </div>
-                <div class="mb-3" v-if="isRegister">
-                  <label for="confirmPassword" class="form-label">Confirm Password</label>
-                  <input 
-                    type="password" 
-                    class="form-control" 
-                    id="confirmPassword" 
-                    v-model="registerForm.confirmPassword" 
-                    required
-                  >
-                </div>
-                <div class="mb-3 form-check" v-if="!isRegister">
-                  <input type="checkbox" class="form-check-input" id="rememberMe" v-model="loginForm.rememberMe">
-                  <label class="form-check-label" for="rememberMe">Remember me</label>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                  {{ isRegister ? 'Register' : 'Login' }}
-                </button>
-              </form>
-            </div>
-            <div class="modal-footer justify-content-center">
-              <p class="mb-0">
-                {{ isRegister ? 'Already have an account?' : 'Don\'t have an account?' }}
-                <a href="#" @click.prevent="isRegister = !isRegister">
-                  {{ isRegister ? 'Login' : 'Register now' }}
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-backdrop fade" :class="{ 'show': showLoginModal }" v-if="showLoginModal"></div>
-  
       <!-- Appointment Modal -->
       <div class="modal fade" :class="{ 'show d-block': showAppointmentModal }" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -386,7 +311,8 @@
   
   <script setup>
   import { ref, computed, onMounted } from 'vue';
-  
+  import Swal from 'sweetalert2';
+ 
   
   // Navigation state
   const isNavOpen = ref(false);
