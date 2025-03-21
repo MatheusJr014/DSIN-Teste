@@ -9,8 +9,7 @@
             <div class="card-body">
               <div class="text-center mb-4" v-if="userInfo">
                 <div class="position-relative d-inline-block">
-                  <img src="../../assets/images/image.png"
-                    alt="User Profile" class="rounded-circle img-fluid mb-3"
+                  <img src="../../assets/images/image.png" alt="User Profile" class="rounded-circle img-fluid mb-3"
                     style="width: 120px; height: 120px; object-fit: cover;">
 
                 </div>
@@ -18,7 +17,7 @@
                 <p class="text-muted">Função: {{ userInfo.role || 'Desconhecida' }}</p>
               </div>
 
-              <!-- Mensagem de carregamento enquanto userInfo não está disponível -->
+
               <div v-else>
                 <p>Carregando informações do usuário...</p>
               </div>
@@ -53,53 +52,40 @@
         <!-- Main Content Area -->
         <div class="col-lg-9">
           <!-- Profile Information Tab -->
-          <!-- <div v-if="activeTab === 'profile'">
-              <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
-                  <h5 class="card-title mb-0 fw-bold">Personal Information</h5>
-                </div>
-                <div class="card-body">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label">First Name</label>
-                      <input type="text" class="form-control" v-model="userInfo.firstName">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Last Name</label>
-                      <input type="text" class="form-control" v-model="userInfo.lastName">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Email</label>
-                      <input type="email" class="form-control" v-model="userInfo.email">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">Phone</label>
-                      <input type="tel" class="form-control" v-model="userInfo.phone">
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label">Address</label>
-                      <input type="text" class="form-control" v-model="userInfo.address">
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label">City</label>
-                      <input type="text" class="form-control" v-model="userInfo.city">
-                    </div>
-                    <div class="col-md-4">
-                      <label class="form-label">State</label>
-                      <input type="text" class="form-control" v-model="userInfo.state">
-                    </div>
-                    <div class="col-md-2">
-                      <label class="form-label">Zip</label>
-                      <input type="text" class="form-control" v-model="userInfo.zip">
-                    </div>
-                    <div class="col-12">
-                      <button class="btn btn-primary">Save Changes</button>
-                    </div>
+          <div v-if="activeTab === 'profile'">
+            <!-- Alterar Dados -->
+            <div class="card border-0 shadow-sm mb-4" v-if="userInfo">
+              <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0 fw-bold">Alterar Dados</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Nome</label>
+                    <input type="text" class="form-control" v-model="userInfo.username">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">CPF</label>
+                    <input type="text" class="form-control" v-model="userInfo.usercpf">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" v-model="userInfo.useremail">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Telefone</label>
+                    <input type="tel" class="form-control" v-model="userInfo.userphone">
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary" @click="updateUser">Save Changes</button>
                   </div>
                 </div>
               </div>
-              
-              <div class="card border-0 shadow-sm">
+            </div>
+            <div v-else>
+              <p>Carregando dados do usuário...</p>
+            </div>
+            <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                   <h5 class="card-title mb-0 fw-bold">Recent Appointments</h5>
                   <a href="#" class="btn btn-sm btn-link" @click.prevent="activeTab = 'appointments'">View All</a>
@@ -125,7 +111,7 @@
                   </div>
                 </div>
               </div>
-            </div> -->
+          </div>
 
           <!-- Appointments Tab -->
           <!-- <div v-if="activeTab === 'appointments'">
@@ -350,28 +336,6 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-// import { 
-//   Scissors, 
-//   Menu, 
-//   X, 
-//   User,
-//   Calendar,
-//   Heart,
-//   Settings,
-//   Eye,
-//   Search,
-//   PaintBrush,
-//   Sparkles,
-//   Hand,
-//   CalendarX,
-//   CheckCircle,
-//   Star,
-//   Info,
-//   AlertTriangle,
-//   Edit
-// } from 'lucide-vue-next';
-
-// Custom icon component for massage
 
 export default {
   data() {
@@ -397,6 +361,9 @@ export default {
           this.userInfo = {
             id: decodedToken.Id,
             username: decodedToken.username,
+            usercpf: decodedToken.usercpf,
+            userphone: decodedToken.userphone,
+            useremail: decodedToken.useremail,
             role: decodedToken.role
           };
         } catch (error) {
@@ -407,6 +374,35 @@ export default {
         this.$router.push('/login');
       }
     },
+    async updateUser() {
+      const token = localStorage.getItem('token');
+      const userId = this.userInfo.id;
+
+      if (!token || !userId) {
+        console.error('Token or user ID missing.');
+        return;
+      }
+
+      try {
+        const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId}`, {
+          username: this.userInfo.username,
+          useremail: this.userInfo.useremail,
+          usercpf: this.userInfo.usercpf,
+          userphone: this.userInfo.userphone
+        });
+
+        if (response.status === 200) {
+          alert('Dados atualizados com sucesso!');
+        } else {
+          console.error('Erro ao atualizar os dados', response);
+          alert('Erro ao atualizar os dados. Tente novamente.');
+        }
+      } catch (error) {
+        console.error('Erro na requisição', error);
+        alert('Erro ao atualizar os dados. Tente novamente.');
+      }
+    },
+
     logout() {
       localStorage.removeItem('token');
       this.$router.push('/login');
