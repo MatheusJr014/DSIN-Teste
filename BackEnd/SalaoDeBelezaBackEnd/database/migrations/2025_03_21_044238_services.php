@@ -15,9 +15,10 @@ return new class extends Migration
         Schema::create('services',function(Blueprint $table){
             $table->id();
             $table->string('servicetype');
-            $table->float('serviceprice');
+            $table->decimal('serviceprice',10,2);
             $table->string('serviceimage');
             $table->string('servicedescription');
+            $table->timestamps();
         });
 
         Schema::create('appointments', function (Blueprint $table) {

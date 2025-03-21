@@ -24,29 +24,29 @@ class AppointmentsController extends Controller
     public function create(Request $request)
     {
         // Validação
-        $data = $request->validate([
-            'appointmentstype' => 'required|string',
-            'appointmentsstatus' => 'required|boolean',
+        $validated = $request->validate([
+            'appointmentsstatus' => 'required|string',
             'appointmentsorder' => 'required|integer',
-            'appointmentsclientid' => 'required|string',
-            'appointmentsservice' => 'required|string',
+            'appointmentsuserid' => 'required|exists:users,id', // Validando se o usuário existe
+            'appointmentsserviceid' => 'required|exists:services,id', // Validando se o serviço existe
             'appointmentsterm' => 'required|boolean',
-            'appointmentdate' => 'required|date',
+            'appointmentsdate' => 'required|date',
         ]);
 
         // Criação do agendamento
         Appointments::create([
-            'appointmentstype' => $data['appointmentstype'],
-            'appointmentsstatus' => $data['appointmentsstatus'],
-            'appointmentsorder' => $data['appointmentsorder'],
-            'appointmentsclientid' => $data['appointmentsclientid'],
-            'appointmentsservice' => $data['appointmentsservice'],
-            'appointmentsterm' => $data['appointmentsterm'],
-            'appointmentdate' => $data['appointmentdate']
+            'appointmentsstatus' => $validated['appointmentsstatus'],
+            'appointmentsorder' => $validated['appointmentsorder'],
+            'appointmentsuserid' => $validated['appointmentsuserid'],
+            'appointmentsserviceid' => $validated['appointmentsserviceid'],
+            'appointmentsterm' => $validated['appointmentsterm'],
+            'appointmentsdate' => $validated['appointmentsdate'],
         ]);
 
-        // Retorno de sucesso
-        return response()->json(['message' => 'Agendamento Realizado com sucesso!'], 201);
+        // Retornar resposta com sucesso
+        return response()->json([
+            'message' => 'Agendamento criado com sucesso'
+        ], 201);
     }
 
 
