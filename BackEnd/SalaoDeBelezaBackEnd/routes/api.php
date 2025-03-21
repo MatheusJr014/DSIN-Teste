@@ -27,9 +27,10 @@ Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('api.user
 
 //Appointments - Agendamentos
 Route::get('/appointments', [AppointmentsController::class, 'index'])->name('api.appointments.index');
-
+Route::get('/appointments/{id}', [AppointmentsController::class, 'show'])->name('api.appointments.show');
+Route::put('/appointments/{id}', [AppointmentsController::class, 'update'])->name('api.appointments.update');
 Route::post('/appointments', [AppointmentsController::class, 'create'])->name('api.appointments.create');
-
+Route::delete('/appointments/{id}', [AppointmentsController::class, 'destroy'])->name('api.appointments.destroy');
 
 //Services - Serviços
 
