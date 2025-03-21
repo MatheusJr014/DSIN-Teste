@@ -27,16 +27,11 @@
             </li>
             <li class="nav-item ms-lg-3">
               <button 
-                class="btn btn-outline-primary" 
-                @click="showLoginModal = true" 
-                v-if="!isLoggedIn">
-                Login
-              </button>
-              <button 
-                class="btn btn-primary" 
-                @click="showAppointmentModal = true" 
-                v-else>
-                Book Appointment
+                  class="btn btn-outline-primary" 
+                  v-if="!isLoggedIn">
+                  <router-link to="/login" class="text-decoration-none text-reset">
+                  Login
+                  </router-link>
               </button>
             </li>
           </ul>
