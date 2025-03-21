@@ -12,7 +12,7 @@ const router = createRouter({
         {
             path: '/login',
             name: 'Login',
-            component:()=>import('@/components/Publico/LoginComponents.vue')
+            component:()=>import('@/views/Publico/LoginView.vue')
         },
         {
             path:'/user/cliente',

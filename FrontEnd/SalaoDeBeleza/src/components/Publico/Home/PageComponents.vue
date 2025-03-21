@@ -7,23 +7,23 @@
         <div class="container">
           <div class="row align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0">
-              <h1 class="display-4 fw-bold mb-3">Beauty & Relaxation Just a Click Away</h1>
+              <h1 class="display-4 fw-bold mb-3">Beleza & Relaxamento</h1>
               <p class="lead text-muted mb-4">
-                Schedule your next beauty treatment with our easy-to-use online booking system. 
-                Experience luxury and care at BeautyTime Salon.
+                Agende seu próximo tratamento de beleza com nosso sistema de agendamento on-line fácil de usar. 
+                Experimente luxo e cuidado no Leila Beauty
               </p>
               <div class="d-flex flex-wrap gap-2">
                 <button 
                   class="btn btn-primary btn-lg" 
                   @click="isLoggedIn ? showAppointmentModal = true : showLoginModal = true">
-                  Book Now
+                  Agendar Agora!
                 </button>
-                <a href="#services" class="btn btn-outline-secondary btn-lg">Our Services</a>
+                <a href="#services" class="btn btn-outline-secondary btn-lg">Serviços</a>
               </div>
             </div>
             <div class="col-lg-6">
               <img 
-                src="https://placehold.co/600x400/f8f9fa/6c757d?text=Beauty+Salon" 
+                src="../../../assets/images/image.png" 
                 alt="Beauty Salon" 
                 class="img-fluid rounded shadow-lg"
               >
@@ -36,21 +36,21 @@
       <section id="services" class="py-5">
         <div class="container">
           <div class="text-center mb-5">
-            <h2 class="fw-bold">Our Services</h2>
-            <p class="text-muted">Discover our range of professional beauty treatments</p>
+            <h2 class="fw-bold">Nossos Serviços</h2>
+            <p class="text-muted">Descubra Todos os nossos Tratamentos Profissionais</p>
           </div>
           <div class="row g-4">
             <div class="col-md-6 col-lg-4" v-for="(service, index) in services" :key="index">
               <div class="card h-100 border-0 shadow-sm">
-                <img :src="service.image" class="card-img-top" :alt="service.name">
+                <img src="../../../assets/images/image.png" class="card-img-top" :alt="service.servicetype">
                 <div class="card-body">
-                  <h5 class="card-title fw-bold">{{ service.name }}</h5>
-                  <p class="card-text text-muted">{{ service.description }}</p>
-                  <p class="fw-bold text-primary">{{ service.price }}</p>
+                  <h5 class="card-title fw-bold">{{ service.servicetype }}</h5>
+                  <p class="card-text text-muted">{{ service.servicedescription }}</p>
+                  <p class="fw-bold text-primary">{{ service.serviceprice }}</p>
                   <button 
                     class="btn btn-outline-primary" 
                     @click="selectService(service)">
-                    Book Now
+                   Agendar Agora
                   </button>
                 </div>
               </div>
@@ -58,14 +58,34 @@
           </div>
         </div>
       </section>
-  
+       <!-- Modal de Agendamento -->
+      <div v-if="showAppointmentModal" class="modal fade show" tabindex="-1" style="display: block;" aria-hidden="false">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Detalhes do Agendamento</h5>
+              <button type="button" class="btn-close" @click="showAppointmentModal = false" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Status:</strong></p>
+              <p><strong>Data do Agendamento:</strong></p>
+              <p><strong>Serviço:</strong> </p>
+              <p><strong>Confirmação de Termo:</strong> </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="showAppointmentModal = false">Fechar</button>
+              <button type="button" class="btn btn-primary" @click="confirmAppointment">Confirmar Agendamento</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- About Section -->
       <section id="about" class="py-5 bg-light">
         <div class="container">
           <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
               <img 
-                src="https://placehold.co/600x400/f8f9fa/6c757d?text=Our+Team" 
+                src="../../../assets/images/image.png" 
                 alt="Our Team" 
                 class="img-fluid rounded shadow-lg"
               >
@@ -186,314 +206,31 @@
           </div>
         </div>
       </section>
-      <!-- Appointment Modal -->
-      <div class="modal fade" :class="{ 'show d-block': showAppointmentModal }" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fw-bold">Book an Appointment</h5>
-              <button type="button" class="btn-close" @click="showAppointmentModal = false"></button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <h6 class="fw-bold mb-3">Select Service</h6>
-                  <div class="list-group">
-                    <button 
-                      v-for="(service, index) in services" 
-                      :key="index"
-                      class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                      :class="{ 'active': appointment.service?.id === service.id }"
-                      @click="appointment.service = service"
-                    >
-                      <span>{{ service.name }}</span>
-                      <span>{{ service.price }}</span>
-                    </button>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <h6 class="fw-bold mb-3">Select Date & Time</h6>
-                  <div class="mb-3">
-                    <label for="appointmentDate" class="form-label">Date</label>
-                    <input 
-                      type="date" 
-                      class="form-control" 
-                      id="appointmentDate" 
-                      v-model="appointment.date"
-                      :min="minDate"
-                    >
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Available Time Slots</label>
-                    <div class="d-flex flex-wrap gap-2">
-                      <button 
-                        v-for="time in availableTimes" 
-                        :key="time"
-                        class="btn btn-outline-primary"
-                        :class="{ 'active': appointment.time === time }"
-                        @click="appointment.time = time"
-                      >
-                        {{ time }}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <hr>
-              <div class="mb-3">
-                <label for="appointmentNotes" class="form-label">Special Requests or Notes</label>
-                <textarea 
-                  class="form-control" 
-                  id="appointmentNotes" 
-                  rows="2"
-                  v-model="appointment.notes"
-                ></textarea>
-              </div>
-              <div class="alert alert-info" v-if="appointment.service">
-                <h6 class="fw-bold">Appointment Summary</h6>
-                <p class="mb-1">Service: {{ appointment.service.name }}</p>
-                <p class="mb-1" v-if="appointment.date">Date: {{ formatDate(appointment.date) }}</p>
-                <p class="mb-1" v-if="appointment.time">Time: {{ appointment.time }}</p>
-                <p class="mb-0" v-if="appointment.service">Price: {{ appointment.service.price }}</p>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="showAppointmentModal = false">Cancel</button>
-              <button 
-                type="button" 
-                class="btn btn-primary" 
-                @click="bookAppointment"
-                :disabled="!isAppointmentValid"
-              >
-                Confirm Booking
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-backdrop fade" :class="{ 'show': showAppointmentModal }" v-if="showAppointmentModal"></div>
-  
-      <!-- Confirmation Modal -->
-      <div class="modal fade" :class="{ 'show d-block': showConfirmationModal }" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fw-bold">Booking Confirmed!</h5>
-              <button type="button" class="btn-close" @click="showConfirmationModal = false"></button>
-            </div>
-            <div class="modal-body">
-              <div class="text-center mb-3">
-                <check-circle-icon class="text-success" size="64" />
-              </div>
-              <h5 class="text-center mb-3">Thank you for your booking</h5>
-              <div class="card">
-                <div class="card-body">
-                  <h6 class="fw-bold">Appointment Details</h6>
-                  <p class="mb-1">Service: {{ confirmedAppointment.service?.name }}</p>
-                  <p class="mb-1">Date: {{ formatDate(confirmedAppointment.date) }}</p>
-                  <p class="mb-1">Time: {{ confirmedAppointment.time }}</p>
-                  <p class="mb-0">Price: {{ confirmedAppointment.service?.price }}</p>
-                </div>
-              </div>
-              <p class="mt-3 mb-0 text-center">
-                A confirmation email has been sent to your email address.
-              </p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" @click="showConfirmationModal = false">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-backdrop fade" :class="{ 'show': showConfirmationModal }" v-if="showConfirmationModal"></div>
     </div>
   </template>
   
-  <script setup>
+  <script>
   import { ref, computed, onMounted } from 'vue';
+  import axios from 'axios';
   import Swal from 'sweetalert2';
  
-  
-  // Navigation state
-  const isNavOpen = ref(false);
-  const activeSection = ref('home');
-  
-  // Authentication state
-  const isLoggedIn = ref(false);
-  const showLoginModal = ref(false);
-  const isRegister = ref(false);
-  
-  const loginForm = ref({
-    email: '',
-    password: '',
-    rememberMe: false
-  });
-  
-  const registerForm = ref({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-  
-  // Services data
-  const services = ref([
-    {
-      id: 1,
-      name: 'Haircut & Styling',
-      description: 'Professional haircut and styling by our expert stylists.',
-      price: '$45',
-      image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Haircut+%26+Styling'
-    },
-    {
-      id: 2,
-      name: 'Hair Coloring',
-      description: 'Full hair coloring service with premium products.',
-      price: '$85',
-      image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Hair+Coloring'
-    },
-    {
-      id: 3,
-      name: 'Manicure & Pedicure',
-      description: 'Complete nail care for hands and feet.',
-      price: '$60',
-      image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Manicure+%26+Pedicure'
-    },
-    {
-      id: 4,
-      name: 'Facial Treatment',
-      description: 'Rejuvenating facial treatment for all skin types.',
-      price: '$75',
-      image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Facial+Treatment'
-    },
-    {
-      id: 5,
-      name: 'Makeup Application',
-      description: 'Professional makeup for any occasion.',
-      price: '$65',
-      image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Makeup+Application'
-    },
-    {
-      id: 6,
-      name: 'Massage Therapy',
-      description: 'Relaxing massage to relieve stress and tension.',
-      price: '$90',
-      image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Massage+Therapy'
-    }
-  ]);
-  
-  // Testimonials data
-  const testimonials = ref([
-    {
-      name: 'Sarah Johnson',
-      title: 'Regular Client',
-      comment: 'Id',
-      avatar: 'https://placehold.co/100/f8f9fa/6c757d?text=SJ'
-    },
-    {
-      name: 'Michael Brown',
-      title: 'New Client',
-      comment: 'Had my first haircut here last week and .',
-      avatar: 'https://placehold.co/100/f8f9fa/6c757d?text=MB'
-    },
-    {
-      name: 'Emily Davis',
-      title: 'Regular Client',
-      comment: 'The online booking system is so convenient! I love being able to schedule my appointments anytime without having to call.',
-      avatar: 'https://placehold.co/100/f8f9fa/6c757d?text=ED'
-    }
-  ]);
-  
-  // Appointment state
-  const showAppointmentModal = ref(false);
-  const showConfirmationModal = ref(false);
-  const appointment = ref({
-    service: null,
-    date: '',
-    time: '',
-    notes: ''
-  });
-  const confirmedAppointment = ref({});
-  
-  // Available time slots
-  const availableTimes = ref([
-    '9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', 
-    '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
-  ]);
-  
-  // Computed properties
-  const minDate = computed(() => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-  });
-  
-  const isAppointmentValid = computed(() => {
-    return appointment.value.service && 
-           appointment.value.date && 
-           appointment.value.time;
-  });
-  
-  // Methods
-  const handleLogin = () => {
-    if (isRegister.value) {
-      // Handle registration
-      if (registerForm.value.password !== registerForm.value.confirmPassword) {
-        alert('Passwords do not match!');
-        return;
+  export default{
+    data(){
+      return{
+        services:[],
       }
-      // In a real app, you would send this data to your backend
-      console.log('Register form submitted:', registerForm.value);
-      isLoggedIn.value = true;
-    } else {
-      // Handle login
-      // In a real app, you would validate credentials with your backend
-      console.log('Login form submitted:', loginForm.value);
-      isLoggedIn.value = true;
-    }
-    
-    showLoginModal.value = false;
-    
-    // Reset forms
-    loginForm.value = { email: '', password: '', rememberMe: false };
-    registerForm.value = { name: '', email: '', password: '', confirmPassword: '' };
-  };
-  
-  const selectService = (service) => {
-    if (!isLoggedIn.value) {
-      showLoginModal.value = true;
-      return;
-    }
-    
-    appointment.value.service = service;
-    showAppointmentModal.value = true;
-  };
-  
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-  
-  const bookAppointment = () => {
-    // In a real app, you would send this data to your backend
-    console.log('Booking appointment:', appointment.value);
-    
-    // Store the confirmed appointment details
-    confirmedAppointment.value = { ...appointment.value };
-    
-    // Reset the appointment form
-    appointment.value = { service: null, date: '', time: '', notes: '' };
-    
-    // Close appointment modal and show confirmation
-    showAppointmentModal.value = false;
-    showConfirmationModal.value = true;
-  };
-  
-  // Lifecycle hooks
-  onMounted(() => {
-    // Any initialization code
-  });
+    },
+    created(){
+    axios.get('http://127.0.0.1:8000/api/services')
+      .then((response) => {
+        
+        this.services = response.data;
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar os serviços:', error);
+      });
+    },
+  }
   </script>
   
   <style>
