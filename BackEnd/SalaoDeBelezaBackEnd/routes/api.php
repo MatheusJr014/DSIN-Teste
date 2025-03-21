@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\UserController;
+use App\Models\Services;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,4 +34,7 @@ Route::post('/appointments', [AppointmentsController::class, 'create'])->name('a
 //Services - Serviços
 
 Route::get('/services', [ServicesController::class, 'index'])->name('api.services.index');
+Route::get('/services/{id}', [ServicesController::class, 'show'])->name('api.services.show');
+Route::put('/services/{id}', [ServicesController::class, 'update'])->name('api.services.update');
 Route::post('/services', [ServicesController::class, 'create'])->name('api.services.create');
+Route::delete('/services/{id}', [ServicesController::class, 'destroy'])->name('api.services.destroy');
