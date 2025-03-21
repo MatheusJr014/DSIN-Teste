@@ -73,9 +73,13 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $user = Users::find($id);
+        if(!$user){
+            return response()->json(['error'=> 'User Not Found'],404);
+        }
+        return response()->json($user);
     }
 
     /**
@@ -107,8 +111,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $user = Users::findOrfail($id);
+        $user->delete();
+        return response()->noContent();
     }
 }

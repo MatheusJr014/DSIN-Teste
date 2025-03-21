@@ -54,9 +54,16 @@ class ServicesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $service = Services::find($id);
+        if(!$service){
+            return response()->json(['error' => 'Service not found'], 404);
+
+        }
+
+        return response()->json($service);
+
     }
 
     /**
@@ -70,16 +77,36 @@ class ServicesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $service = Services::findOrFail($id);
+
+    
+        // Verifica se o professor logado está tentando atualizar seu próprio perfil
+        // if ($professor->id != $id) {
+        //     return response()->json(['error' => 'Acesso negado.'], 403);
+        // }
+    
+        $data = $request->validate([
+            'servicetype' => 'required|string|max:255',
+            'serviceprice' => 'required|numeric',
+            'serviceimage' => 'nullable|string',
+            'servicedescription' => 'string'
+        ]);
+
+    
+        $service->update($data);
+        return response()->json($service, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy( $id)
     {
-        //
+        $service = Services::findOrFail($id);
+        $service->delete();
+
+        return response()->noContent();
     }
 }
