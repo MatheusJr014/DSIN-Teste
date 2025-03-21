@@ -28,10 +28,6 @@
                   <user-icon class="me-2" size="18" />
                   Perfil
                 </a>
-                <a href="#" class="list-group-item list-group-item-action" @click.prevent="activeTab = 'appointments'">
-                  <calendar-icon class="me-2" size="18" />
-                  Meus Agendamentos
-                </a>
                 <a href="#" class="list-group-item list-group-item-action" @click.prevent="activeTab = 'favorites'">
                   <heart-icon class="me-2" size="18" />
                   Histórico de Agendamentos
@@ -77,7 +73,7 @@
                     <input type="tel" class="form-control" v-model="userInfo.userphone">
                   </div>
                   <div class="col-12">
-                    <button class="btn btn-primary" @click="updateUser">Save Changes</button>
+                    <button class="btn btn-primary" @click="updateUser">Salvar Alterações</button>
                   </div>
                 </div>
               </div>
@@ -86,35 +82,44 @@
               <p>Carregando dados do usuário...</p>
             </div>
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                  <h5 class="card-title mb-0 fw-bold">Recent Appointments</h5>
-                  <a href="#" class="btn btn-sm btn-link" @click.prevent="activeTab = 'appointments'">View All</a>
-                </div>
-                <div class="card-body p-0">
-                  <div class="list-group list-group-flush">
-                    <div class="list-group-item py-3" v-for="(appointment, index) in recentAppointments" :key="index">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                          <h6 class="mb-1 fw-bold">{{ appointment.service }}</h6>
-                          <p class="mb-0 text-muted">
-                            <calendar-icon size="14" class="me-1" />
-                            {{ formatDate(appointment.date) }} at {{ appointment.time }}
-                          </p>
-                        </div>
-                        <div>
-                          <span class="badge" :class="getStatusBadgeClass(appointment.status)">
-                            {{ appointment.status }}
-                          </span>
-                        </div>
+              <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-bold">Últimos Agendamentos</h5>
+                <a href="#" class="btn btn-sm btn-link" @click.prevent="activeTab = 'appointments'">Ver Histórico</a>
+              </div>
+              <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                  <div class="list-group-item py-3" v-for="(appointment, index) in appointments" :key="index">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <h6 class="mb-1 fw-bold">{{ appointment.service }}</h6>
+                        <p class="mb-0 text-muted">
+                          <calendar-icon size="14" class="me-1" />
+                          {{ appointment.appointmentsdate }}
+                        </p>
                       </div>
+                      <div>
+                        <span class="badge">
+                          {{ appointment.status }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-2">
+                      <button class="btn btn-warning btn-sm me-2" @click="editAppointment(appointment.id)">
+                        Editar
+                      </button>
+                      <button class="btn btn-danger btn-sm" @click="deleteAppointment(appointment.id)">
+                        Excluir
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
           </div>
+        </div>
 
-          <!-- Appointments Tab -->
-          <!-- <div v-if="activeTab === 'appointments'">
+        <!-- Appointments Tab -->
+        <!-- <div v-if="activeTab === 'appointments'">
               <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                   <h5 class="card-title mb-0 fw-bold">Meus Agendamentos</h5>
@@ -235,8 +240,8 @@
               </div>
             </div> -->
 
-          <!-- Favorites Tab -->
-          <!-- <div v-if="activeTab === 'favorites'">
+        <!-- Favorites Tab -->
+        <!-- <div v-if="activeTab === 'favorites'">
               <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3">
                   <h5 class="card-title mb-0 fw-bold">Favorite Services</h5>
@@ -276,8 +281,8 @@
               </div>
             </div> -->
 
-          <!-- Settings Tab -->
-          <!-- <div v-if="activeTab === 'settings'">
+        <!-- Settings Tab -->
+        <!-- <div v-if="activeTab === 'settings'">
               <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3">
                   <h5 class="card-title mb-0 fw-bold">Account Settings</h5>
@@ -322,14 +327,11 @@
                 </div>
               </div>
             </div> -->
-        </div>
       </div>
     </div>
-
-
-
-
   </div>
+
+
 </template>
 
 <script>
@@ -341,21 +343,19 @@ export default {
   data() {
     return {
       userInfo: null,
+      appointments: [],
       activeTab: 'profile',
-
     };
   },
   mounted() {
     this.fetchUserInfo();
   },
   methods: {
-
-    fetchUserInfo() {
+    async fetchUserInfo() {
       const token = localStorage.getItem('token');
 
       if (token) {
         try {
-
           const decodedToken = jwtDecode(token);
 
           this.userInfo = {
@@ -364,31 +364,45 @@ export default {
             usercpf: decodedToken.usercpf,
             userphone: decodedToken.userphone,
             useremail: decodedToken.useremail,
-            role: decodedToken.role
+            role: decodedToken.role,
           };
         } catch (error) {
           console.error('Erro ao decodificar o token JWT:', error);
           this.$router.push('/login');
         }
+        this.fetchAppointments();
       } else {
         this.$router.push('/login');
       }
     },
-    async updateUser() {
-      const token = localStorage.getItem('token');
-      const userId = this.userInfo.id;
+    async fetchAppointments() {
 
-      if (!token || !userId) {
-        console.error('Token or user ID missing.');
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/appointments');
+        this.appointments = response.data;
+
+      } catch (error) {
+        console.error('Erro ao buscar os agendamentos:', error);
+      }
+    },
+    async updateUser() {
+      const token = localStorage.getItem('token'); // Obter o token do localStorage
+
+      if (!token) {
+        console.error('Token não encontrado.');
         return;
       }
 
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.Id; // Usar o ID do token decodificado
+
       try {
-        const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId}`, {
+        const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId.id}`, {
           username: this.userInfo.username,
           useremail: this.userInfo.useremail,
+          userphone: this.userInfo.userphone,
           usercpf: this.userInfo.usercpf,
-          userphone: this.userInfo.userphone
+          role: this.userInfo.role,
         });
 
         if (response.status === 200) {
@@ -406,8 +420,8 @@ export default {
     logout() {
       localStorage.removeItem('token');
       this.$router.push('/login');
-    }
-  }
+    },
+  },
 }
 
 const MassageIcon = {
