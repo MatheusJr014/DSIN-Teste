@@ -204,7 +204,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
@@ -226,6 +226,20 @@ export default {
   },
   methods: {
     selectService(service) {
+      const token = localStorage.getItem("token");
+      if (!token) {
+  
+        Swal.fire({
+          icon: 'warning',
+          title: 'Sessão expirada!',
+          text: 'Você precisa estar logado para agendar um serviço.',
+          confirmButtonText: 'Ir para o login'
+        }).then(() => {
+          $this.$router.push('/login'); 
+        });
+        return;
+      }
+
       this.showAppointmentModal = true;
       this.appointment.serviceId = service.id;
       this.selectedServiceName = service.servicetype;
@@ -238,7 +252,7 @@ export default {
 
       const appointmentData = {
         appointmentsstatus: this.appointment.status,
-        appointmentsorder: 2, // Ajuste conforme necessário
+        appointmentsorder: 2, //Tem que colocar pra ser autoIncremente **NÃO ESQUECER**
         appointmentsuserid: this.appointment.userId,
         appointmentsserviceid: this.appointment.serviceId,
         appointmentsterm: this.appointment.term,
@@ -275,13 +289,12 @@ export default {
 
       try {
         const decoded = jwtDecode(token);
-        console.log("Token decodificado:", decoded); // Verifica a estrutura do token
 
         if (decoded && decoded.id) {
           this.appointment.userId = decoded.id;
           console.log("User ID carregado:", this.appointment.userId);
         } else {
-          console.error("O token não contém 'user_id'. Verifique a estrutura.");
+          console.error("O token não contém 'id'. Verifique a estrutura.");
         }
       } catch (error) {
         console.error("Erro ao decodificar o token:", error);
