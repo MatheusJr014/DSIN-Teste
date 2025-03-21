@@ -44,7 +44,8 @@ class Users extends Authenticatable implements JWTSubject
             'usercpf'=>$this->usercpf,
             'useremail'=>$this->useremail,
             'userphone'=>$this->userphone,
-            'userstatus'=>$this->userstatus
+            'userstatus'=>$this->userstatus,
+            'role'=>$this->role,
         ];
     }
 }
