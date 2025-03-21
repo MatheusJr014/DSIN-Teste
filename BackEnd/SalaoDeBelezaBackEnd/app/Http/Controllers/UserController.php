@@ -45,7 +45,8 @@ class UserController extends Controller
             'useremail' => $data['useremail'], 
             'password' => bcrypt($data['password']), 
             'userphone' => $data['userphone'], 
-            'userstatus' => $data['userstatus']
+            'userstatus' => $data['userstatus'],
+            'role'=> ['role']
 
         ]);
 
@@ -65,8 +66,7 @@ class UserController extends Controller
 
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
-            'role' => 'admin'
+            'token_type' => 'bearer'
         ]);
     }
 
