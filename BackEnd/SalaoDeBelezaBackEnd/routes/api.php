@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-//Users 
+//Login 
 Route::post('/users/login', [UserController::class, 'login_user']);
+//Users 
 Route::get('/users', [UserController::class, 'index'])->name('api.users.index');
+Route::get('/users/{id}', [UserController::class, 'show'])->name('api.users.show');
 Route::put('/users/{id}', [UserController::class, 'update'])->name('api.users.update');
 Route::post('/users', [UserController::class, 'create'])->name('api.users.create');
-
+Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('api.users.destroy');
 
 //Appointments - Agendamentos
 Route::get('/appointments', [AppointmentsController::class, 'index'])->name('api.appointments.index');
