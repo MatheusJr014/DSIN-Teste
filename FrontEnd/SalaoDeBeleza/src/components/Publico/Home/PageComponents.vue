@@ -58,7 +58,27 @@
           </div>
         </div>
       </section>
-  
+       <!-- Modal de Agendamento -->
+      <div v-if="showAppointmentModal" class="modal fade show" tabindex="-1" style="display: block;" aria-hidden="false">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Detalhes do Agendamento</h5>
+              <button type="button" class="btn-close" @click="showAppointmentModal = false" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Status:</strong></p>
+              <p><strong>Data do Agendamento:</strong></p>
+              <p><strong>Serviço:</strong> </p>
+              <p><strong>Confirmação de Termo:</strong> </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="showAppointmentModal = false">Fechar</button>
+              <button type="button" class="btn btn-primary" @click="confirmAppointment">Confirmar Agendamento</button>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- About Section -->
       <section id="about" class="py-5 bg-light">
         <div class="container">
@@ -201,10 +221,9 @@
       }
     },
     created(){
-          // Fazer a requisição para a API quando o componente for criado
     axios.get('http://127.0.0.1:8000/api/services')
       .then((response) => {
-        // Armazenar os dados da resposta no array services
+        
         this.services = response.data;
       })
       .catch((error) => {
@@ -212,186 +231,6 @@
       });
     },
   }
-  // // Navigation state
-  // const isNavOpen = ref(false);
-  // const activeSection = ref('home');
-  
-  // // Authentication state
-  // const isLoggedIn = ref(false);
-  // const showLoginModal = ref(false);
-  // const isRegister = ref(false);
-  
-  // const loginForm = ref({
-  //   email: '',
-  //   password: '',
-  //   rememberMe: false
-  // });
-  
-  // const registerForm = ref({
-  //   name: '',
-  //   email: '',
-  //   password: '',
-  //   confirmPassword: ''
-  // });
-  
-  // // Services data
-  // const services = ref([
-  //   {
-  //     id: 1,
-  //     name: 'Haircut & Styling',
-  //     description: 'Professional haircut and styling by our expert stylists.',
-  //     price: '$45',
-  //     image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Haircut+%26+Styling'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Hair Coloring',
-  //     description: 'Full hair coloring service with premium products.',
-  //     price: '$85',
-  //     image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Hair+Coloring'
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Manicure & Pedicure',
-  //     description: 'Complete nail care for hands and feet.',
-  //     price: '$60',
-  //     image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Manicure+%26+Pedicure'
-  //   },
-  //   {
-  //     id: 4,
-  //     name: 'Facial Treatment',
-  //     description: 'Rejuvenating facial treatment for all skin types.',
-  //     price: '$75',
-  //     image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Facial+Treatment'
-  //   },
-  //   {
-  //     id: 5,
-  //     name: 'Makeup Application',
-  //     description: 'Professional makeup for any occasion.',
-  //     price: '$65',
-  //     image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Makeup+Application'
-  //   },
-  //   {
-  //     id: 6,
-  //     name: 'Massage Therapy',
-  //     description: 'Relaxing massage to relieve stress and tension.',
-  //     price: '$90',
-  //     image: 'https://placehold.co/600x400/f8f9fa/6c757d?text=Massage+Therapy'
-  //   }
-  // ]);
-  
-  // // Testimonials data
-  // const testimonials = ref([
-  //   {
-  //     name: 'Sarah Johnson',
-  //     title: 'Regular Client',
-  //     comment: 'Id',
-  //     avatar: 'https://placehold.co/100/f8f9fa/6c757d?text=SJ'
-  //   },
-  //   {
-  //     name: 'Michael Brown',
-  //     title: 'New Client',
-  //     comment: 'Had my first haircut here last week and .',
-  //     avatar: 'https://placehold.co/100/f8f9fa/6c757d?text=MB'
-  //   },
-  //   {
-  //     name: 'Emily Davis',
-  //     title: 'Regular Client',
-  //     comment: 'The online booking system is so convenient! I love being able to schedule my appointments anytime without having to call.',
-  //     avatar: 'https://placehold.co/100/f8f9fa/6c757d?text=ED'
-  //   }
-  // ]);
-  
-  // // Appointment state
-  // const showAppointmentModal = ref(false);
-  // const showConfirmationModal = ref(false);
-  // const appointment = ref({
-  //   service: null,
-  //   date: '',
-  //   time: '',
-  //   notes: ''
-  // });
-  // const confirmedAppointment = ref({});
-  
-  // // Available time slots
-  // const availableTimes = ref([
-  //   '9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', 
-  //   '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
-  // ]);
-  
-  // // Computed properties
-  // const minDate = computed(() => {
-  //   const today = new Date();
-  //   return today.toISOString().split('T')[0];
-  // });
-  
-  // const isAppointmentValid = computed(() => {
-  //   return appointment.value.service && 
-  //          appointment.value.date && 
-  //          appointment.value.time;
-  // });
-  
-  // // Methods
-  // const handleLogin = () => {
-  //   if (isRegister.value) {
-  //     // Handle registration
-  //     if (registerForm.value.password !== registerForm.value.confirmPassword) {
-  //       alert('Passwords do not match!');
-  //       return;
-  //     }
-  //     // In a real app, you would send this data to your backend
-  //     console.log('Register form submitted:', registerForm.value);
-  //     isLoggedIn.value = true;
-  //   } else {
-  //     // Handle login
-  //     // In a real app, you would validate credentials with your backend
-  //     console.log('Login form submitted:', loginForm.value);
-  //     isLoggedIn.value = true;
-  //   }
-    
-  //   showLoginModal.value = false;
-    
-  //   // Reset forms
-  //   loginForm.value = { email: '', password: '', rememberMe: false };
-  //   registerForm.value = { name: '', email: '', password: '', confirmPassword: '' };
-  // };
-  
-  // const selectService = (service) => {
-  //   if (!isLoggedIn.value) {
-  //     showLoginModal.value = true;
-  //     return;
-  //   }
-    
-  //   appointment.value.service = service;
-  //   showAppointmentModal.value = true;
-  // };
-  
-  // const formatDate = (dateString) => {
-  //   if (!dateString) return '';
-    
-  //   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  //   return new Date(dateString).toLocaleDateString(undefined, options);
-  // };
-  
-  // const bookAppointment = () => {
-  //   // In a real app, you would send this data to your backend
-  //   console.log('Booking appointment:', appointment.value);
-    
-  //   // Store the confirmed appointment details
-  //   confirmedAppointment.value = { ...appointment.value };
-    
-  //   // Reset the appointment form
-  //   appointment.value = { service: null, date: '', time: '', notes: '' };
-    
-  //   // Close appointment modal and show confirmation
-  //   showAppointmentModal.value = false;
-  //   showConfirmationModal.value = true;
-  // };
-  
-  // // Lifecycle hooks
-  // onMounted(() => {
-  //   // Any initialization code
-  // });
   </script>
   
   <style>
