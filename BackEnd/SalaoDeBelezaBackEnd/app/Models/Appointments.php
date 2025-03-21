@@ -13,12 +13,19 @@ class Appointments extends Model
     protected $table = "appointments";  
     
     protected $fillable = [
-        'appointmentstype', #Tipo do agendamento
         'appointmentsstatus', #Status do agendamento
         'appointmentsorder', ##Ordem do agendamento
-        'appointmentsclientid', ##Cliente Id
-        'appointmentsservice', ##Serviço
+        'appointmentsuserid', ##Cliente Id
+        'appointmentsserviceid', ##Serviço
         'appointmentsterm', ##Prazo booleano 
         'appointmentsdate' #Data do agendamento
     ];
+
+    public function client()
+    {
+        return $this->belongsTo(Users::class, 'appointmentsuserid');
+    }
+    public function service(){
+        return $this->belongsTo(Services::class, 'serviceid');
+    }
 }

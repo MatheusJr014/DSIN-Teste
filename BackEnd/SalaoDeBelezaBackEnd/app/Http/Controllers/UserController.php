@@ -46,7 +46,7 @@ class UserController extends Controller
             'password' => bcrypt($data['password']), 
             'userphone' => $data['userphone'], 
             'userstatus' => $data['userstatus'],
-            'role'=> ['role']
+            'role'=> 'string'
 
         ]);
 
