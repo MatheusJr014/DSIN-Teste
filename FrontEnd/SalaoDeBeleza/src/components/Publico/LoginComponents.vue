@@ -8,7 +8,7 @@
                         <div class="text-center mb-4">
                             <a href="#" class="d-inline-flex align-items-center text-decoration-none">
                                 <scissors-icon class="me-2 text-primary" size="28" />
-                                <span class="fw-bold fs-4">BeautyTime</span>
+                                <span class="fw-bold fs-4">Leila Beauty</span>
                             </a>
                             <h1 class="fw-bold mt-4 mb-2">Bem-vindo(a) de volta</h1>
                             <p class="text-muted">Entre com seus dados para acessar sua conta</p>
@@ -59,38 +59,8 @@
                 <!-- Right side - Image -->
                 <div class="col-md-6 d-none d-md-block">
                     <div class="login-image h-100 d-flex flex-column justify-content-center text-white p-5"
-                        style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://placehold.co/1200x900/ff6b6b/ffffff?text=Beauty+Salon') center/cover no-repeat;">
-                        <div class="mb-auto">
-                            <h4 class="fw-bold">BeautyTime</h4>
-                        </div>
-                        <div class="mb-5">
-                            <h2 class="fw-bold display-5 mb-3">Transforme sua beleza com nossos serviços exclusivos</h2>
-                            <p class="lead mb-4">Agende seus serviços de beleza online e desfrute de uma experiência
-                                premium.</p>
-                            <div class="d-flex">
-                                <div class="d-flex align-items-center me-4">
-                                    <check-circle-icon class="me-2" />
-                                    <span>Profissionais qualificados</span>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <check-circle-icon class="me-2" />
-                                    <span>Produtos premium</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="d-flex align-items-center">
-                                <div class="d-flex">
-                                    <img src="https://placehold.co/100/ffffff/ff6b6b?text=JS" alt="Testimonial"
-                                        class="rounded-circle me-3" width="50" height="50">
-                                    <div>
-                                        <p class="mb-1 fst-italic">"Melhor salão que já frequentei! Atendimento
-                                            impecável e resultados incríveis."</p>
-                                        <p class="mb-0 fw-bold">Julia Santos</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        style="background-color: #F2F2F2;">
+                        <img src="../../assets/images/image.png" alt="">
                     </div>
                 </div>
             </div>

@@ -32,7 +32,7 @@
                                 <a href="#" class="list-group-item list-group-item-action"
                                     @click.prevent="activeTab = 'agendamentos'">
                                     <heart-icon class="me-2" size="18" />
-                                    Agendamentos
+                                    Historico Agendamentos
                                 </a>
                                 <a href="#" class="list-group-item list-group-item-action"
                                     @click.prevent="activeTab = 'services'">
@@ -208,9 +208,40 @@
                     </div>
                     </div>
                     </div>
+                    <div v-if="activeTab === 'agendamentos'" >
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0 fw-bold">Histórico de Agendamentos</h5>
+                                <a href="#" class="btn btn-sm btn-link" @click.prevent="activeTab = 'historicoAgendamentos'">Ver Histórico</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item py-3" v-for="(appointment, index) in historicalAppointments" :key="index">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1 fw-bold">{{ appointment.service.servicetype || 'Serviço não encontrado' }}</h6>
+                                                <p class="mb-0 text-muted">
+                                                    <b>Data do Agendamento: </b>{{ appointment.appointmentsdate }}
+                                                </p>
+                                                <p class="mb-0 text-muted">
+                                                    <b>Descrição:</b> {{ appointment.service.servicedescription || 'Sem descrição' }}
+                                                </p>
+                                                <p class="mb-0 text-muted">
+                                                    <b>Preço:</b> R$ {{ appointment.service.serviceprice || '0.00' }}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span class="badge" :class="getStatusBadgeClass(appointment.status)">
+                                                    {{ appointment.appointmentsstatus }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Serviços -->
-
             </div>
         </div>
         <div v-if="showCreateModal" class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
@@ -345,6 +376,13 @@ export default {
             ...appointment,
             service: serviceMap[appointment.appointmentsserviceid] || {}
           }));
+            // Filtra os agendamentos com 'term' igual a false para o histórico
+        this.historicalAppointments = appointments
+        .filter(appointment => appointment.appointmentsterm === false)  // Filtro para 'term' igual a false
+        .map(appointment => ({
+            ...appointment,
+            service: serviceMap[appointment.appointmentsserviceid] || {}
+        }));
 
       } catch (error) {
         console.error('Erro ao buscar os dados:', error);
