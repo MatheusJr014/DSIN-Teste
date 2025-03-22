@@ -366,7 +366,7 @@ export default {
           const decodedToken = jwtDecode(token);
 
           this.userInfo = {
-            id: decodedToken.Id,
+            id: decodedToken.id,
             username: decodedToken.username,
             usercpf: decodedToken.usercpf,
             userphone: decodedToken.userphone,
@@ -410,10 +410,12 @@ export default {
         });
 
 
-        this.appointments = appointments.map(appointment => ({
-          ...appointment,
-          service: serviceMap[appointment.appointmentsserviceid] || {}
-        }));
+        this.appointments = appointments
+          .filter(appointment => appointment.appointmentsuserid === this.userInfo.id)
+          .map(appointment => ({
+            ...appointment,
+            service: serviceMap[appointment.appointmentsserviceid] || {}
+          }));
 
       } catch (error) {
         console.error('Erro ao buscar os dados:', error);
@@ -448,7 +450,7 @@ export default {
 
         if (response.status === 200) {
           alert('Dados atualizados com sucesso!');
-          this.fetchUserInfo(); 
+          this.fetchUserInfo();
         } else {
           console.error('Erro ao atualizar os dados', response);
           alert('Erro ao atualizar os dados. Tente novamente.');
