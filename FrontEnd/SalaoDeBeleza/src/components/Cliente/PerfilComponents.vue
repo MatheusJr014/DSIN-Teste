@@ -28,10 +28,6 @@
                   <user-icon class="me-2" size="18" />
                   Perfil
                 </a>
-                <a href="#" class="list-group-item list-group-item-action" @click.prevent="activeTab = 'favorites'">
-                  <heart-icon class="me-2" size="18" />
-                  Histórico de Agendamentos
-                </a>
                 <a href="#" class="list-group-item list-group-item-action" @click.prevent="activeTab = 'settings'">
                   <settings-icon class="me-2" size="18" />
                   Configurações de Conta
@@ -145,16 +141,6 @@
                       <input type="number" class="form-control" id="appointmentsorder"
                         v-model="selectedAppointment.appointmentsorder" required />
                     </div>
-<!-- 
-                    <div class="mb-3">
-                      <label for="appointmentsserviceid" class="form-label">Serviço</label>
-                      <select class="form-control" id="appointmentsserviceid"
-                        v-model="selectedAppointment.appointmentsserviceid">
-                        <option v-for="service in services" :value="service.id" :key="service.id">{{ service.servicetype
-                          }}</option>
-                      </select>
-                    </div> -->
-
                     <div class="mb-3 form-check">
                       <input type="checkbox" class="form-check-input" id="appointmentsTerm"
                         v-model="selectedAppointment.appointmentsterm" />
@@ -171,170 +157,6 @@
           </div>
 
         </div>
-
-        <!-- Appointments Tab -->
-        <!-- <div v-if="activeTab === 'appointments'">
-              <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                  <h5 class="card-title mb-0 fw-bold">Meus Agendamentos</h5>
-                </div>
-                <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="btn-group" role="group">
-                      <button 
-                        type="button" 
-                        class="btn" 
-                        :class="appointmentFilter === 'all' ? 'btn-primary' : 'btn-outline-primary'"
-                        @click="appointmentFilter = 'all'"
-                      >
-                        All
-                      </button>
-                      <button 
-                        type="button" 
-                        class="btn" 
-                        :class="appointmentFilter === 'upcoming' ? 'btn-primary' : 'btn-outline-primary'"
-                        @click="appointmentFilter = 'upcoming'"
-                      >
-                        Upcoming
-                      </button>
-                      <button 
-                        type="button" 
-                        class="btn" 
-                        :class="appointmentFilter === 'pending' ? 'btn-primary' : 'btn-outline-primary'"
-                        @click="appointmentFilter = 'pending'"
-                      >
-                        Pending
-                      </button>
-                      <button 
-                        type="button" 
-                        class="btn" 
-                        :class="appointmentFilter === 'completed' ? 'btn-primary' : 'btn-outline-primary'"
-                        @click="appointmentFilter = 'completed'"
-                      >
-                        Completed
-                      </button>
-                    </div>
-                    <div class="d-flex">
-                      <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search appointments..." v-model="searchQuery">
-                        <button class="btn btn-outline-secondary" type="button">
-                          <search-icon size="18" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="table-responsive">
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th>Service</th>
-                          <th>Date</th>
-                          <th>Time</th>
-                          <th>Staff</th>
-                          <th>Status</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(appointment, index) in filteredAppointments" :key="index">
-                          <td>
-                            <div class="d-flex align-items-center">
-                              <div class="service-icon me-2 rounded-circle d-flex align-items-center justify-content-center" :class="getServiceIconClass(appointment.serviceType)">
-                                <scissors-icon v-if="appointment.serviceType === 'haircut'" size="16" />
-                                <paint-brush-icon v-else-if="appointment.serviceType === 'coloring'" size="16" />
-                                <sparkles-icon v-else-if="appointment.serviceType === 'facial'" size="16" />
-                                <hand-icon v-else-if="appointment.serviceType === 'manicure'" size="16" />
-                                <massage-icon v-else size="16" />
-                              </div>
-                              {{ appointment.service }}
-                            </div>
-                          </td>
-                          <td>{{ formatDate(appointment.date) }}</td>
-                          <td>{{ appointment.time }}</td>
-                          <td>{{ appointment.staff }}</td>
-                          <td>
-                            <span class="badge" :class="getStatusBadgeClass(appointment.status)">
-                              {{ appointment.status }}
-                            </span>
-                          </td>
-                          <td>
-                            <div class="btn-group">
-                              <button class="btn btn-sm btn-outline-secondary" @click="viewAppointment(appointment)">
-                                <eye-icon size="16" />
-                              </button>
-                              <button 
-                                class="btn btn-sm btn-outline-primary" 
-                                v-if="appointment.status === 'Pending' || appointment.status === 'Approved'"
-                                @click="rescheduleAppointment(appointment)"
-                              >
-                                <calendar-icon size="16" />
-                              </button>
-                              <button 
-                                class="btn btn-sm btn-outline-danger" 
-                                v-if="appointment.status === 'Pending' || appointment.status === 'Approved'"
-                                @click="cancelAppointment(appointment)"
-                              >
-                                <x-icon size="16" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr v-if="filteredAppointments.length === 0">
-                          <td colspan="6" class="text-center py-4">
-                            <calendar-x-icon size="48" class="text-muted mb-2" />
-                            <h6>No appointments found</h6>
-                            <p class="text-muted mb-0">{{ getNoAppointmentsMessage() }}</p>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
-        <!-- Favorites Tab -->
-        <!-- <div v-if="activeTab === 'favorites'">
-              <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                  <h5 class="card-title mb-0 fw-bold">Favorite Services</h5>
-                </div>
-                <div class="card-body">
-                  <div class="row g-4">
-                    <div class="col-md-6" v-for="(service, index) in favoriteServices" :key="index">
-                      <div class="card h-100">
-                        <div class="card-body">
-                          <div class="d-flex justify-content-between align-items-start">
-                            <div class="d-flex">
-                              <div class="service-icon me-3 rounded-circle d-flex align-items-center justify-content-center" :class="getServiceIconClass(service.type)">
-                                <scissors-icon v-if="service.type === 'haircut'" size="20" />
-                                <paint-brush-icon v-else-if="service.type === 'coloring'" size="20" />
-                                <sparkles-icon v-else-if="service.type === 'facial'" size="20" />
-                                <hand-icon v-else-if="service.type === 'manicure'" size="20" />
-                                <massage-icon v-else size="20" />
-                              </div>
-                              <div>
-                                <h6 class="fw-bold mb-1">{{ service.name }}</h6>
-                                <p class="text-muted mb-0">{{ service.duration }} • {{ service.price }}</p>
-                              </div>
-                            </div>
-                            <button class="btn btn-sm btn-link text-danger p-0" @click="removeFromFavorites(service)">
-                              <heart-icon size="20" fill="#dc3545" />
-                            </button>
-                          </div>
-                          <p class="mt-3 mb-0">{{ service.description }}</p>
-                        </div>
-                        <div class="card-footer bg-white border-top-0">
-                          <button class="btn btn-primary w-100" @click="bookService(service)">Book Now</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
         <!-- Settings Tab -->
         <!-- <div v-if="activeTab === 'settings'">
               <div class="card border-0 shadow-sm mb-4">
@@ -520,20 +342,33 @@ export default {
     editAppointment(appointmentId) {
       const appointment = this.appointments.find(a => a.id === appointmentId);
       if (appointment) {
-        this.selectedAppointment = { ...appointment }; // Copia os dados para o modal
+        const originalDate = new Date(appointment.appointmentsdate); 
+        const today = new Date(); 
+
+
+        
+        const diffDays = (originalDate - today) / (1000 * 60 * 60 * 24);
+
+        if (diffDays <= 1) { 
+          Swal.fire('Alerta', 'O reagendamento não pode ser efetuado entrar em contato com a Leila Beauty ', 'warning');
+          return;
+        }
+
+        this.selectedAppointment = { ...appointment };
         const modal = new bootstrap.Modal(document.getElementById('editAppointmentModal'));
         modal.show();
       }
     },
+
 
     async updateAppointment() {
       try {
         const response = await axios.put(`http://127.0.0.1:8000/api/appointments/${this.selectedAppointment.id}`, this.selectedAppointment);
         if (response.status === 200) {
           Swal.fire('Sucesso', 'Agendamento atualizado com sucesso!', 'success');
-          this.fetchAppointments(); // Atualiza a lista de agendamentos
+          this.fetchAppointments();
           const modal = bootstrap.Modal.getInstance(document.getElementById('editAppointmentModal'));
-          modal.hide(); // Fecha o modal após a atualização
+          modal.hide();
         } else {
           Swal.fire('Erro', 'Ocorreu um erro ao atualizar o agendamento', 'error');
         }
