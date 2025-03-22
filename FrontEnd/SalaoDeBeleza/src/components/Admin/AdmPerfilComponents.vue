@@ -30,24 +30,19 @@
                                     Perfil
                                 </a>
                                 <a href="#" class="list-group-item list-group-item-action"
-                                    @click.prevent="activeTab = 'favorites'">
+                                    @click.prevent="activeTab = 'agendamentos'">
                                     <heart-icon class="me-2" size="18" />
                                     Agendamentos
                                 </a>
                                 <a href="#" class="list-group-item list-group-item-action"
-                                    @click.prevent="activeTab = 'favorites'">
+                                    @click.prevent="activeTab = 'services'">
                                     <heart-icon class="me-2" size="18" />
                                     Serviços
                                 </a>
                                 <a href="#" class="list-group-item list-group-item-action"
-                                    @click.prevent="activeTab = 'favorites'">
+                                    @click.prevent="activeTab = 'meu negocio'">
                                     <heart-icon class="me-2" size="18" />
                                     Meu Negocio
-                                </a>
-                                <a href="#" class="list-group-item list-group-item-action"
-                                    @click.prevent="activeTab = 'settings'">
-                                    <settings-icon class="me-2" size="18" />
-                                    Configurações de Conta
                                 </a>
                             </div>
 
@@ -97,7 +92,7 @@
                         </div>
                         <div class="card border-0 shadow-sm">
                             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0 fw-bold">Últimos Agendamentos</h5>
+                                <h5 class="card-title mb-0 fw-bold">Últimas Ordens de Agendamento</h5>
                                 <a href="#" class="btn btn-sm btn-link" @click.prevent="activeTab = 'appointments'">Ver
                                     Histórico</a>
                             </div>
@@ -107,15 +102,21 @@
                                         :key="index">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
-                                                <h6 class="mb-1 fw-bold">{{ appointment.service }}</h6>
+                                                <h6 class="mb-1 fw-bold">{{ appointment.service.servicetype || 'Serviçonão encontrado' }}</h6>
                                                 <p class="mb-0 text-muted">
-                                                    <calendar-icon size="14" class="me-1" />
-                                                    {{ appointment.appointmentsdate }}
+
+                                                    <b>Data do Agendamento: </b>{{ appointment.appointmentsdate }}
+                                                </p>
+                                                <p class="mb-0 text-muted">
+                                                    <b>Descrição:</b> {{ appointment.service.servicedescription || 'Sem descrição' }}
+                                                </p>
+                                                <p class="mb-0 text-muted">
+                                                    <b>Preço:</b> R$ {{ appointment.service.serviceprice || '0.00' }}
                                                 </p>
                                             </div>
                                             <div>
-                                                <span class="badge">
-                                                    {{ appointment.status }}
+                                                <span class="badge" :class="getStatusBadgeClass(appointment.status)">
+                                                    {{ appointment.appointmentsstatus }}
                                                 </span>
                                             </div>
                                         </div>
@@ -128,11 +129,121 @@
                                                 @click="deleteAppointment(appointment.id)">
                                                 Excluir
                                             </button>
+                                            <button v-if="appointment.appointmentsstatus === 'Pendente'" class="btn btn-success btn-sm" @click="confirmAppointment(appointment.id)">
+                                                Confirmar Chamado
+                                            </button>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="editAppointmentModal" tabindex="-1" aria-labelledby="editAppointmentModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="editAppointmentModalLabel">Editar Agendamento</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <form @submit.prevent="updateAppointment">
+                                <div class="mb-3">
+                                <label for="appointmentsdate" class="form-label">Data do Agendamento</label>
+                                <input type="date" class="form-control" id="appointmentsdate"
+                                    v-model="selectedAppointment.appointmentsdate" required />
+                                </div>
+
+                                <div class="mb-3">
+                                <label for="appointmentsorder" class="form-label">Ordem de Agendamento</label>
+                                <input type="number" class="form-control" id="appointmentsorder"
+                                    v-model="selectedAppointment.appointmentsorder" required />
+                                </div>
+                                <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="appointmentsTerm"
+                                    v-model="selectedAppointment.appointmentsterm" />
+                                <label class="form-check-label" for="appointmentsTerm">Aceito os termos</label>
+                                </div>
+
+                                <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">Salvar</button>
+                                </div>
+                            </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div v-if="activeTab === 'services'">
+                    <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="card-title mb-0 fw-bold">Favorite Services</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6" v-for="(service, index) in services" :key="index">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="fw-bold mb-1">{{ service.servicetype }}</h6>
+                                                <p class="text-muted mb-1">R${{ service.serviceprice }}</p>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-sm btn-info" @click="updateService(service)">
+                                                    Editar
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" @click="deleteService(service.id)">
+                                                    Excluir
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p class="mt-3 mb-0">{{ service.servicedescription }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mt-3" @click="openCreateServiceModal">
+                                Cadastrar Novo Serviço
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+                <!-- Serviços -->
+
+            </div>
+        </div>
+        <div v-if="showCreateModal" class="modal fade show" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cadastrar Novo Serviço</h5>
+                        <button type="button" class="btn btn-danger ms-auto" @click="closeCreateModal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form @submit.prevent="createService">
+                            <div class="form-group">
+                                <label for="servicetype">Tipo de Serviço</label>
+                                <input type="text" class="form-control" id="servicetype" v-model="newService.servicetype" required />
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="serviceprice">Preço</label>
+                                <input type="number" class="form-control" id="serviceprice" v-model="newService.serviceprice" required />
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="serviceimage">Imagem</label>
+                                <input type="text" class="form-control" id="serviceimage" v-model="newService.serviceimage" required />
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="servicedescription">Descrição</label>
+                                <textarea class="form-control" id="servicedescription" v-model="newService.servicedescription" required></textarea>
+                            </div>
+                            <div class="form-group mt-4">
+                                <button type="submit" class="btn btn-primary w-100">Cadastrar Serviço</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -141,477 +252,282 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-
+import Swal from 'sweetalert2';
 export default {
-    data() {
-        return {
-            userInfo: null,
-            appointments: [],
-            activeTab: 'profile',
-        };
-    },
-    mounted() {
-        this.fetchUserInfo();
-    },
-    methods: {
-        async fetchUserInfo() {
-            const token = localStorage.getItem('token');
-
-            if (token) {
-                try {
-                    const decodedToken = jwtDecode(token);
-
-                    this.userInfo = {
-                        id: decodedToken.Id,
-                        username: decodedToken.username,
-                        usercpf: decodedToken.usercpf,
-                        userphone: decodedToken.userphone,
-                        useremail: decodedToken.useremail,
-                        role: decodedToken.role,
-                    };
-                } catch (error) {
-                    console.error('Erro ao decodificar o token JWT:', error);
-                    this.$router.push('/login');
-                }
-                this.fetchAppointments();
-            } else {
-                this.$router.push('/login');
-            }
-        },
-        async updateUser() {
-            const token = localStorage.getItem('token'); // Obter o token do localStorage
-
-            if (!token) {
-                console.error('Token não encontrado.');
-                return;
-            }
-
-            const decodedToken = jwtDecode(token);
-            console.log('Token decodificado:', decodedToken); // Verificar a estrutura do token
-
-            const userId = decodedToken.id;
-            if (!userId) {
-                console.error('ID do usuário não encontrado no token.');
-                return;
-            }
-
-            try {
-                const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId}`, {
-                    username: this.userInfo.username,
-                    useremail: this.userInfo.useremail,
-                    userphone: this.userInfo.userphone,
-                    usercpf: this.userInfo.usercpf,
-                    role: this.userInfo.role,
-                });
-
-                if (response.status === 200) {
-                    alert('Dados atualizados com sucesso!');
-                    this.fetchUserInfo(); // Atualiza os dados do usuário na interface
-                } else {
-                    console.error('Erro ao atualizar os dados', response);
-                    alert('Erro ao atualizar os dados. Tente novamente.');
-                }
-            } catch (error) {
-                console.error('Erro na requisição', error);
-                alert('Erro ao atualizar os dados. Tente novamente.');
-            }
-        },
-
-
-        logout() {
-            localStorage.removeItem('token');
-            this.$router.push('/login');
-        },
-    },
-}
-
-const MassageIcon = {
-    template: `
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 20v-6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6"></path>
-        <path d="M12 12V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"></path>
-        <path d="M12 12V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v4"></path>
-      </svg>
-    `
-};
-
-// Navigation state
-const isNavOpen = ref(false);
-const activeTab = ref('profile');
-
-// User information
-const userInfo = ref({
-    firstName: 'Jane',
-    lastName: 'Smith',
-    email: 'jane.smith@example.com',
-    phone: '(123) 456-7890',
-    address: '123 Main St',
-    city: 'Anytown',
-    state: 'CA',
-    zip: '12345',
-    memberSince: '2023-01-15'
-});
-
-// Appointments data
-const allAppointments = ref([
-    {
-        id: 1,
-        service: 'Haircut & Styling',
-        serviceType: 'haircut',
-        date: '2025-03-25',
-        time: '10:00 AM',
-        staff: 'Maria Garcia',
-        status: 'Approved',
-        duration: '1 hour',
-        price: '$45',
-        notes: 'Trim about 2 inches and add layers'
-    },
-    {
-        id: 2,
-        service: 'Hair Coloring',
-        serviceType: 'coloring',
-        date: '2025-04-10',
-        time: '2:00 PM',
-        staff: 'John Davis',
-        status: 'Pending',
-        duration: '2 hours',
-        price: '$85',
-        notes: 'Balayage highlights'
-    },
-    {
-        id: 3,
-        service: 'Manicure & Pedicure',
-        serviceType: 'manicure',
-        date: '2025-03-15',
-        time: '11:30 AM',
-        staff: 'Lisa Wong',
-        status: 'Completed',
-        duration: '1.5 hours',
-        price: '$60',
-        notes: ''
-    },
-    {
-        id: 4,
-        service: 'Facial Treatment',
-        serviceType: 'facial',
-        date: '2025-02-28',
-        time: '3:00 PM',
-        staff: 'Robert Johnson',
-        status: 'Cancelled',
-        duration: '1 hour',
-        price: '$75',
-        notes: ''
-    },
-    {
-        id: 5,
-        service: 'Massage Therapy',
-        serviceType: 'massage',
-        date: '2025-04-05',
-        time: '4:30 PM',
-        staff: 'Sarah Miller',
-        status: 'Approved',
-        duration: '1 hour',
-        price: '$90',
-        notes: 'Deep tissue massage'
-    }
-]);
-
-// Favorite services
-const favoriteServices = ref([
-    {
-        id: 1,
-        name: 'Haircut & Styling',
-        type: 'haircut',
-        duration: '1 hour',
-        price: '$45',
-        description: 'Professional haircut and styling by our expert stylists.'
-    },
-    {
-        id: 2,
-        name: 'Manicure & Pedicure',
-        type: 'manicure',
-        duration: '1.5 hours',
-        price: '$60',
-        description: 'Complete nail care for hands and feet.'
-    },
-    {
-        id: 3,
-        name: 'Facial Treatment',
-        type: 'facial',
-        duration: '1 hour',
-        price: '$75',
-        description: 'Rejuvenating facial treatment for all skin types.'
-    }
-]);
-
-// Account settings
-const settings = ref({
-    notifications: {
-        appointments: true,
-        promotions: true,
-        news: false
-    }
-});
-
-// Password change form
-const passwordForm = ref({
-    current: '',
-    new: '',
-    confirm: ''
-});
-
-// Appointment filtering
-const appointmentFilter = ref('all');
-const searchQuery = ref('');
-
-// Modals state
-const showAppointmentModal = ref(false);
-const showRescheduleModal = ref(false);
-const showCancelModal = ref(false);
-const showDeleteConfirmation = ref(false);
-
-// Selected appointment
-const selectedAppointment = ref(null);
-
-// Review state
-const rating = ref(0);
-const reviewText = ref('');
-
-// Reschedule form
-const rescheduleForm = ref({
-    date: '',
-    time: '',
-    reason: ''
-});
-
-// Cancel reason
-const cancelReason = ref('');
-
-// Delete confirmation
-const deleteConfirmation = ref('');
-
-// Available time slots
-const availableTimes = ref([
-    '9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM',
-    '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
-]);
-
-// Computed properties
-const minDate = computed(() => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-});
-
-const recentAppointments = computed(() => {
-    return allAppointments.value
-        .filter(app => app.status === 'Approved' || app.status === 'Pending')
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .slice(0, 3);
-});
-
-const filteredAppointments = computed(() => {
-    let filtered = [...allAppointments.value];
-
-    // Filter by status
-    if (appointmentFilter.value !== 'all') {
-        const statusMap = {
-            'upcoming': ['Approved', 'Pending'],
-            'pending': ['Pending'],
-            'completed': ['Completed']
-        };
-
-        filtered = filtered.filter(app =>
-            statusMap[appointmentFilter.value]?.includes(app.status)
-        );
-    }
-
-    // Filter by search query
-    if (searchQuery.value.trim()) {
-        const query = searchQuery.value.toLowerCase();
-        filtered = filtered.filter(app =>
-            app.service.toLowerCase().includes(query) ||
-            app.staff.toLowerCase().includes(query) ||
-            app.status.toLowerCase().includes(query)
-        );
-    }
-
-    // Sort by date (newest first for completed, soonest first for others)
-    filtered.sort((a, b) => {
-        if (a.status === 'Completed' && b.status === 'Completed') {
-            return new Date(b.date) - new Date(a.date);
+  data() {
+    return {
+      userInfo: null,
+      appointments: [],
+      activeTab: 'profile',
+      selectedAppointment: {
+        id: null,
+        appointmentsdate: '',
+        appointmentsstatus: '',
+        appointmentsorder: '',
+        appointmentsserviceid: null,
+        appointmentsterm: false
+      },
+      services: [], 
+      showCreateModal: false, 
+        newService: { 
+            servicetype: '',
+            serviceprice: '',
+            serviceimage: '',
+            servicedescription: ''
         }
-        return new Date(a.date) - new Date(b.date);
-    });
 
-    return filtered;
-});
-
-// Methods
-const formatDate = (dateString) => {
-    if (!dateString) return '';
-
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-const getStatusBadgeClass = (status) => {
-    const statusClasses = {
-        'Approved': 'bg-success',
-        'Pending': 'bg-warning',
-        'Completed': 'bg-info',
-        'Cancelled': 'bg-secondary'
     };
+  },
+  mounted() {
+    this.fetchUserInfo();
+    this.fetchServices();
+  },
+  methods: {
+    async fetchUserInfo() {
+      const token = localStorage.getItem('token');
 
-    return statusClasses[status] || 'bg-secondary';
-};
+      if (token) {
+        try {
+          const decodedToken = jwtDecode(token);
 
-const getServiceIconClass = (type) => {
-    const iconClasses = {
-        'haircut': 'bg-primary bg-opacity-10 text-primary',
-        'coloring': 'bg-danger bg-opacity-10 text-danger',
-        'facial': 'bg-info bg-opacity-10 text-info',
-        'manicure': 'bg-success bg-opacity-10 text-success',
-        'massage': 'bg-warning bg-opacity-10 text-warning'
-    };
+          this.userInfo = {
+            id: decodedToken.id,
+            username: decodedToken.username,
+            usercpf: decodedToken.usercpf,
+            userphone: decodedToken.userphone,
+            useremail: decodedToken.useremail,
+            role: decodedToken.role,
+          };
+        } catch (error) {
+          console.error('Erro ao decodificar o token JWT:', error);
+          this.$router.push('/login');
+        }
+        this.fetchAppointments();
+      } else {
+        this.$router.push('/login');
+      }
+    },
 
-    return iconClasses[type] || 'bg-secondary bg-opacity-10 text-secondary';
-};
+    getStatusBadgeClass(status) {
+      const statusClasses = {
+        'Confirmed': 'bg-success',
+        'Pendente': 'bg-warning',
+        'Completo': 'bg-info',
+        'Cancelado': 'bg-secondary'
+      };
 
-const viewAppointment = (appointment) => {
-    selectedAppointment.value = appointment;
-    showAppointmentModal.value = true;
-};
+      return statusClasses[status] || 'bg-secondary bg-opacity-10 text-secondary';
 
-const rescheduleAppointment = (appointment) => {
-    selectedAppointment.value = appointment;
-    rescheduleForm.value = {
-        date: '',
-        time: '',
-        reason: ''
-    };
-    showRescheduleModal.value = true;
-    showAppointmentModal.value = false;
-};
+    },
 
-const cancelAppointment = (appointment) => {
-    selectedAppointment.value = appointment;
-    cancelReason.value = '';
-    showCancelModal.value = true;
-    showAppointmentModal.value = false;
-};
+    async fetchAppointments() {
+      try {
 
-const confirmReschedule = () => {
-    // In a real app, you would send this data to your backend
-    console.log('Rescheduling appointment:', {
-        appointmentId: selectedAppointment.value.id,
-        newDate: rescheduleForm.value.date,
-        newTime: rescheduleForm.value.time,
-        reason: rescheduleForm.value.reason
-    });
+        const appointmentsResponse = await axios.get('http://127.0.0.1:8000/api/appointments');
+        const servicesResponse = await axios.get('http://127.0.0.1:8000/api/services');
 
-    // Update the appointment in our local state
-    const index = allAppointments.value.findIndex(app => app.id === selectedAppointment.value.id);
-    if (index !== -1) {
-        allAppointments.value[index].date = rescheduleForm.value.date;
-        allAppointments.value[index].time = rescheduleForm.value.time;
-        allAppointments.value[index].status = 'Pending'; // Reset to pending after reschedule
-    }
+        const appointments = appointmentsResponse.data;
+        const services = servicesResponse.data;
 
-    showRescheduleModal.value = false;
-};
 
-const confirmCancel = () => {
-    // In a real app, you would send this data to your backend
-    console.log('Cancelling appointment:', {
-        appointmentId: selectedAppointment.value.id,
-        reason: cancelReason.value
-    });
+        const serviceMap = {};
+        services.forEach(service => {
+          serviceMap[service.id] = service;
+        });
 
-    // Update the appointment in our local state
-    const index = allAppointments.value.findIndex(app => app.id === selectedAppointment.value.id);
-    if (index !== -1) {
-        allAppointments.value[index].status = 'Cancelled';
-    }
 
-    showCancelModal.value = false;
-};
+        this.appointments = appointments
+          .filter(appointment => appointment.appointmentsterm === true)
+          .map(appointment => ({
+            ...appointment,
+            service: serviceMap[appointment.appointmentsserviceid] || {}
+          }));
 
-const submitReview = () => {
-    // In a real app, you would send this data to your backend
-    console.log('Submitting review:', {
-        appointmentId: selectedAppointment.value.id,
-        rating: rating.value,
-        review: reviewText.value
-    });
+      } catch (error) {
+        console.error('Erro ao buscar os dados:', error);
+      }
+    },
 
-    // Reset review form
-    rating.value = 0;
-    reviewText.value = '';
+    async updateUser() {
+      const token = localStorage.getItem('token');
 
-    // Close modal
-    showAppointmentModal.value = false;
-};
-
-const changePassword = () => {
-    if (passwordForm.value.new !== passwordForm.value.confirm) {
-        alert('New passwords do not match!');
+      if (!token) {
+        console.error('Token não encontrado.');
         return;
-    }
+      }
 
-    // In a real app, you would send this data to your backend
-    console.log('Changing password');
+      const decodedToken = jwtDecode(token);
+      console.log('Token decodificado:', decodedToken); // Verificar a estrutura do token
 
-    // Reset form
-    passwordForm.value = {
-        current: '',
-        new: '',
-        confirm: ''
-    };
-
-    alert('Password updated successfully!');
-};
-
-const confirmDeleteAccount = () => {
-    if (deleteConfirmation.value !== 'DELETE') {
+      const userId = decodedToken.id;
+      if (!userId) {
+        console.error('ID do usuário não encontrado no token.');
         return;
+      }
+
+      try {
+        const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId}`, {
+          username: this.userInfo.username,
+          useremail: this.userInfo.useremail,
+          userphone: this.userInfo.userphone,
+          usercpf: this.userInfo.usercpf,
+          role: this.userInfo.role,
+        });
+
+        if (response.status === 200) {
+          alert('Dados atualizados com sucesso!');
+          this.fetchUserInfo();
+        } else {
+          console.error('Erro ao atualizar os dados', response);
+          alert('Erro ao atualizar os dados. Tente novamente.');
+        }
+      } catch (error) {
+        console.error('Erro na requisição', error);
+        alert('Erro ao atualizar os dados. Tente novamente.');
+      }
+    },
+    editAppointment(appointmentId) {
+      const appointment = this.appointments.find(a => a.id === appointmentId);
+      if (appointment) {
+        this.selectedAppointment = { ...appointment };
+        const modal = new bootstrap.Modal(document.getElementById('editAppointmentModal'));
+        modal.show();
+      }
+    },
+
+
+    async updateAppointment() {
+      try {
+        const response = await axios.put(`http://127.0.0.1:8000/api/appointments/${this.selectedAppointment.id}`, this.selectedAppointment);
+        if (response.status === 200) {
+          Swal.fire('Sucesso', 'Agendamento atualizado com sucesso!', 'success');
+          this.fetchAppointments();
+          const modal = bootstrap.Modal.getInstance(document.getElementById('editAppointmentModal'));
+          modal.hide();
+        } else {
+          Swal.fire('Erro', 'Ocorreu um erro ao atualizar o agendamento', 'error');
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar o agendamento:', error);
+        Swal.fire('Erro', 'Ocorreu um erro ao atualizar o agendamento', 'error');
+      }
+    },
+    async confirmAppointment(appointmentId) {
+    try {
+        // Encontrar o agendamento que será atualizado
+        const appointmentToUpdate = this.appointments.find(appointment => appointment.id === appointmentId);
+
+        if (appointmentToUpdate) {
+        // Enviar uma requisição PUT para atualizar o status e o campo term
+        const response = await axios.put(`http://127.0.0.1:8000/api/appointments/${appointmentId}`, {
+            // Enviar todos os dados do agendamento, mas alterando apenas os campos necessários
+            appointmentsdate: appointmentToUpdate.appointmentsdate,
+            appointmentsorder: appointmentToUpdate.appointmentsorder,
+            appointmentsserviceid: appointmentToUpdate.appointmentsserviceid,
+            appointmentsstatus: 'Confirmado',  // Alterando o status
+            appointmentsterm: false,  // Alterando o campo term
+            appointmentsuserid: appointmentToUpdate.appointmentsuserid,
+        });
+
+        // Atualizar o agendamento localmente
+        this.appointments = this.appointments.map(appointment => {
+            if (appointment.id === appointmentId) {
+            appointment.appointmentsstatus = 'Confirmado';
+            appointment.appointmentsterm = false;
+            }
+            return appointment;
+        });
+
+        console.log('Agendamento confirmado:', response.data);
+        }
+
+    } catch (error) {
+        console.error('Erro ao confirmar o agendamento:', error);
     }
+    },
+        async deleteAppointment(id) {
+      // Exibe o alerta de confirmação de exclusão
+      const result = await Swal.fire({
+        title: 'Tem certeza?',
+        text: "Você não poderá reverter isso!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sim, excluir!',
+      });
 
-    // In a real app, you would send this request to your backend
-    console.log('Deleting account');
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`http://127.0.0.1:8000/api/appointments/${id}`);
 
-    showDeleteConfirmation.value = false;
-    alert('Account deleted successfully!');
-};
+          if (response.status === 204) {
+            Swal.fire('Deletado!', 'Seu agendamento foi excluído.', 'success');
+          } else {
+            Swal.fire('Erro!', 'Ocorreu um erro ao excluir o agendamento. Tente novamente.', 'error');
+          }
+        } catch (error) {
+          Swal.fire('Erro!', 'Ocorreu um erro ao excluir o agendamento. Tente novamente.', 'error');
+          console.error('Erro na requisição', error);
+        }
+      }
+    },
+    async fetchServices() {
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/services');
+            this.services = response.data; // Armazenando os serviços na variável
+        } catch (error) {
+            console.error('Erro ao buscar os serviços:', error);
+        }
+    },
+    openCreateServiceModal() {
+        this.showCreateModal = true;
+    },
 
-const removeFromFavorites = (service) => {
-    favoriteServices.value = favoriteServices.value.filter(s => s.id !== service.id);
-};
+    // Função para fechar o modal de criação de serviço
+    closeCreateModal() {
+        this.showCreateModal = false;
+    },
 
-const bookService = (service) => {
-    // In a real app, you would navigate to booking page with this service pre-selected
-    console.log('Booking service:', service);
-};
-
-const getNoAppointmentsMessage = () => {
-    const messages = {
-        'all': 'You don\'t have any appointments yet',
-        'upcoming': 'You don\'t have any upcoming appointments',
-        'pending': 'You don\'t have any pending appointments',
-        'completed': 'You don\'t have any completed appointments'
-    };
-
-    return messages[appointmentFilter.value] || 'No appointments found';
-};
-
-// Lifecycle hooks
-onMounted(() => {
-    // Any initialization code
-});
+    // Função para cadastrar o novo serviço
+    async createService() {
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/services', this.newService);
+            this.services.push(response.data); 
+            this.closeCreateModal(); 
+        } catch (error) {
+            console.error('Erro ao criar o serviço:', error);
+        }
+    },
+    async updateService(updatedService) {
+        try {
+            const response = await axios.put(`http://127.0.0.1:8000/api/services/${updatedService.id}`, updatedService);
+            const index = this.services.findIndex(service => service.id === updatedService.id);
+            if (index !== -1) {
+                this.services.splice(index, 1, response.data);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar o serviço:', error);
+        }
+    },
+    async deleteService(serviceId) {
+        try {
+            await axios.delete(`http://127.0.0.1:8000/api/services/${serviceId}`);
+            this.services = this.services.filter(service => service.id !== serviceId);
+        } catch (error) {
+            console.error('Erro ao excluir o serviço:', error);
+        }
+    },
+    logout() {
+      localStorage.removeItem('token');
+      this.$router.push('/login');
+    },
+  },
+}
 </script>
-
 <style>
 /* Custom styles */
 .service-icon {
