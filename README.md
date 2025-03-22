@@ -2,7 +2,9 @@
 <h1 align="center"> Teste DSIN </h1>
 
 
-Projeto realizado como demanda de um teste (Complementar Texto) 
+Projeto realizado como demanda de um teste para a Empresa DSIN.
+
+
 
 
 
@@ -15,10 +17,56 @@ Projeto realizado como demanda de um teste (Complementar Texto)
 - Vue Js 3  
 - PostGreeSQL | PgAdmin 
 
-## Instalação Laravel
+## Passo a passo
+```bash
+git clone https://github.com/MatheusJr014/DSIN-Teste
+```
+
+
+## Instalação de dependencia Laravel
 
 ```bash
-composer require danielhe4rt/kick-php-sdk
+cd (pasta com o repositorio clonado)
+```
+
+```bash
+cd DSIN-Teste\BackEnd\SalaoDeBelezaBackEnd 
+```
+### Na pasta do BackEnd dar o seguinte comando abaixo
+
+```bash
+composer install 
+```
+
+
+### Configurar o .env com as informações do banco local!!
+```bash
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nome_do_banco
+DB_USERNAME=usuario
+DB_PASSWORD=senha
+
+```
+### Após isso será necessario criptografar uma key 
+
+```bash
+php artisan key:generate 
+```
+### Subir as migrations
+```bash
+php artisan migrate  
+```
+### Subir os seeders 
+```bash
+php artisan db:seed 
+```
+
+### Rodar o BackEnd Local 
+
+```bash
+php artisan serve 
 ```
 
 
