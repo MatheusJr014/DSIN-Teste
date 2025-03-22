@@ -190,10 +190,16 @@ export default {
             }
 
             const decodedToken = jwtDecode(token);
-            const userId = decodedToken.Id; // Usar o ID do token decodificado
+            console.log('Token decodificado:', decodedToken); // Verificar a estrutura do token
+
+            const userId = decodedToken.id;
+            if (!userId) {
+                console.error('ID do usuário não encontrado no token.');
+                return;
+            }
 
             try {
-                const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId.id}`, {
+                const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId}`, {
                     username: this.userInfo.username,
                     useremail: this.userInfo.useremail,
                     userphone: this.userInfo.userphone,
@@ -203,6 +209,7 @@ export default {
 
                 if (response.status === 200) {
                     alert('Dados atualizados com sucesso!');
+                    this.fetchUserInfo(); // Atualiza os dados do usuário na interface
                 } else {
                     console.error('Erro ao atualizar os dados', response);
                     alert('Erro ao atualizar os dados. Tente novamente.');
@@ -212,6 +219,7 @@ export default {
                 alert('Erro ao atualizar os dados. Tente novamente.');
             }
         },
+
 
         logout() {
             localStorage.removeItem('token');

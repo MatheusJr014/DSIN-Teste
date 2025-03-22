@@ -91,15 +91,21 @@
                   <div class="list-group-item py-3" v-for="(appointment, index) in appointments" :key="index">
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
-                        <h6 class="mb-1 fw-bold">{{ appointment.service }}</h6>
+                        <h6 class="mb-1 fw-bold">{{ appointment.service.servicetype || 'Serviço não encontrado' }}</h6>
                         <p class="mb-0 text-muted">
-                          <calendar-icon size="14" class="me-1" />
-                          {{ appointment.appointmentsdate }}
+          
+                          <b>Data do Agendamento: </b>{{ appointment.appointmentsdate }}
+                        </p>
+                        <p class="mb-0 text-muted">
+                          <b>Descrição:</b> {{ appointment.service.servicedescription || 'Sem descrição' }}
+                        </p>
+                        <p class="mb-0 text-muted">
+                          <b>Preço:</b> R$ {{ appointment.service.serviceprice || '0.00' }}
                         </p>
                       </div>
                       <div>
                         <span class="badge">
-                          {{ appointment.status }}
+                          {{ appointment.appointmentsstatus }}
                         </span>
                       </div>
                     </div>
@@ -112,6 +118,7 @@
                       </button>
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -376,15 +383,31 @@ export default {
       }
     },
     async fetchAppointments() {
-
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/appointments');
-        this.appointments = response.data;
+        // Faz as requisições separadamente
+        const appointmentsResponse = await axios.get('http://127.0.0.1:8000/api/appointments');
+        const servicesResponse = await axios.get('http://127.0.0.1:8000/api/services');
+
+        const appointments = appointmentsResponse.data;
+        const services = servicesResponse.data;
+
+        // Criar um mapa de serviços para acesso rápido
+        const serviceMap = {};
+        services.forEach(service => {
+          serviceMap[service.id] = service;
+        });
+
+        // Vincular os serviços aos agendamentos corretamente
+        this.appointments = appointments.map(appointment => ({
+          ...appointment,
+          service: serviceMap[appointment.appointmentsserviceid] || {} // Associa o serviço pelo ID
+        }));
 
       } catch (error) {
-        console.error('Erro ao buscar os agendamentos:', error);
+        console.error('Erro ao buscar os dados:', error);
       }
     },
+
     async updateUser() {
       const token = localStorage.getItem('token'); // Obter o token do localStorage
 
@@ -396,7 +419,7 @@ export default {
       const decodedToken = jwtDecode(token);
       console.log('Token decodificado:', decodedToken); // Verificar a estrutura do token
 
-      const userId = decodedToken.id; 
+      const userId = decodedToken.id;
       if (!userId) {
         console.error('ID do usuário não encontrado no token.');
         return;
