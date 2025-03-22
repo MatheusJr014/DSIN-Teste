@@ -189,7 +189,7 @@
                                                 <p class="text-muted mb-1">R${{ service.serviceprice }}</p>
                                             </div>
                                             <div>
-                                                <button class="btn btn-sm btn-info" @click="updateService(service)">
+                                                <button class="btn btn-sm btn-info" @click="editService(service.id)">
                                                     Editar
                                                 </button>
                                                 <button class="btn btn-sm btn-danger" @click="deleteService(service.id)">
@@ -279,6 +279,26 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="editServiceModal" tabindex="-1" aria-labelledby="editServiceModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editServiceModalLabel">Editar Serviço</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input v-model="selectedService.servicetype" class="form-control " placeholder="Tipo do serviço">
+                        <input v-model="selectedService.servicedescription" class="form-control mt-2" placeholder="Descrição do serviço">
+                        <input v-model="selectedService.serviceprice" type="number" class="form-control mt-2" placeholder="Preço">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary" @click="updateService">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -301,7 +321,8 @@ export default {
         appointmentsserviceid: null,
         appointmentsterm: false
       },
-      services: [], 
+      services: [],
+      selectedService: {}, 
       showCreateModal: false, 
         newService: { 
             servicetype: '',
@@ -376,7 +397,7 @@ export default {
             ...appointment,
             service: serviceMap[appointment.appointmentsserviceid] || {}
           }));
-            // Filtra os agendamentos com 'term' igual a false para o histórico
+
         this.historicalAppointments = appointments
         .filter(appointment => appointment.appointmentsterm === false)  // Filtro para 'term' igual a false
         .map(appointment => ({
@@ -398,7 +419,7 @@ export default {
       }
 
       const decodedToken = jwtDecode(token);
-      console.log('Token decodificado:', decodedToken); // Verificar a estrutura do token
+      console.log('Token decodificado:', decodedToken); 
 
       const userId = decodedToken.id;
       if (!userId) {
@@ -540,17 +561,43 @@ export default {
             console.error('Erro ao criar o serviço:', error);
         }
     },
-    async updateService(updatedService) {
+    async editService(serviceid) {
+        const service = this.services.find(s => s.id === serviceid);
+        if (service) {
+            this.selectedService = { ...service };
+            console.log("Serviço selecionado:", this.selectedService);
+            const modal = new bootstrap.Modal(document.getElementById('editServiceModal'));
+            modal.show();
+        } else {
+            console.error("Serviço não encontrado!");
+        }
+    },
+
+
+    async updateService() {
+        if (!this.selectedService || !this.selectedService.id) {
+            console.error("Erro: Nenhum serviço selecionado para atualização.");
+            Swal.fire('Erro', 'Nenhum serviço selecionado', 'error');
+            return;
+        }
+
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/services/${updatedService.id}`, updatedService);
-            const index = this.services.findIndex(service => service.id === updatedService.id);
-            if (index !== -1) {
-                this.services.splice(index, 1, response.data);
+            const response = await axios.put(`http://127.0.0.1:8000/api/services/${this.selectedService.id}`, this.selectedService);
+            if (response.status === 200) {
+                Swal.fire('Sucesso', 'Serviço atualizado com sucesso!', 'success');
+                this.fetchServices();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editServiceModal'));
+                modal.hide();
+            } else {
+                Swal.fire('Erro', 'Ocorreu um erro ao atualizar o serviço', 'error');
             }
         } catch (error) {
             console.error('Erro ao atualizar o serviço:', error);
+            Swal.fire('Erro', 'Ocorreu um erro ao atualizar o serviço', 'error');
         }
     },
+
+
     async deleteService(serviceId) {
         try {
             await axios.delete(`http://127.0.0.1:8000/api/services/${serviceId}`);
