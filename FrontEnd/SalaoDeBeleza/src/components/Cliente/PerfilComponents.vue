@@ -91,15 +91,21 @@
                   <div class="list-group-item py-3" v-for="(appointment, index) in appointments" :key="index">
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
-                        <h6 class="mb-1 fw-bold">{{ appointment.service }}</h6>
+                        <h6 class="mb-1 fw-bold">{{ appointment.service.servicetype || 'Serviço não encontrado' }}</h6>
                         <p class="mb-0 text-muted">
-                          <calendar-icon size="14" class="me-1" />
-                          {{ appointment.appointmentsdate }}
+
+                          <b>Data do Agendamento: </b>{{ appointment.appointmentsdate }}
+                        </p>
+                        <p class="mb-0 text-muted">
+                          <b>Descrição:</b> {{ appointment.service.servicedescription || 'Sem descrição' }}
+                        </p>
+                        <p class="mb-0 text-muted">
+                          <b>Preço:</b> R$ {{ appointment.service.serviceprice || '0.00' }}
                         </p>
                       </div>
                       <div>
-                        <span class="badge">
-                          {{ appointment.status }}
+                        <span class="badge" :class="getStatusBadgeClass(appointment.status)">
+                          {{ appointment.appointmentsstatus }}
                         </span>
                       </div>
                     </div>
@@ -112,6 +118,7 @@
                       </button>
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -359,7 +366,7 @@ export default {
           const decodedToken = jwtDecode(token);
 
           this.userInfo = {
-            id: decodedToken.Id,
+            id: decodedToken.id,
             username: decodedToken.username,
             usercpf: decodedToken.usercpf,
             userphone: decodedToken.userphone,
@@ -375,18 +382,48 @@ export default {
         this.$router.push('/login');
       }
     },
-    async fetchAppointments() {
 
+    getStatusBadgeClass(status) {
+      const statusClasses = {
+        'Confirmed': 'bg-success',
+        'Pendente': 'bg-warning',
+        'Completo': 'bg-info',
+        'Cancelado': 'bg-secondary'
+      };
+
+      return statusClasses[status] || 'bg-secondary';
+    },
+
+    async fetchAppointments() {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/appointments');
-        this.appointments = response.data;
+
+        const appointmentsResponse = await axios.get('http://127.0.0.1:8000/api/appointments');
+        const servicesResponse = await axios.get('http://127.0.0.1:8000/api/services');
+
+        const appointments = appointmentsResponse.data;
+        const services = servicesResponse.data;
+
+
+        const serviceMap = {};
+        services.forEach(service => {
+          serviceMap[service.id] = service;
+        });
+
+
+        this.appointments = appointments
+          .filter(appointment => appointment.appointmentsuserid === this.userInfo.id)
+          .map(appointment => ({
+            ...appointment,
+            service: serviceMap[appointment.appointmentsserviceid] || {}
+          }));
 
       } catch (error) {
-        console.error('Erro ao buscar os agendamentos:', error);
+        console.error('Erro ao buscar os dados:', error);
       }
     },
+
     async updateUser() {
-      const token = localStorage.getItem('token'); // Obter o token do localStorage
+      const token = localStorage.getItem('token');
 
       if (!token) {
         console.error('Token não encontrado.');
@@ -394,10 +431,16 @@ export default {
       }
 
       const decodedToken = jwtDecode(token);
-      const userId = decodedToken.Id; // Usar o ID do token decodificado
+      console.log('Token decodificado:', decodedToken); // Verificar a estrutura do token
+
+      const userId = decodedToken.id;
+      if (!userId) {
+        console.error('ID do usuário não encontrado no token.');
+        return;
+      }
 
       try {
-        const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId.id}`, {
+        const response = await axios.put(`http://127.0.0.1:8000/api/users/${userId}`, {
           username: this.userInfo.username,
           useremail: this.userInfo.useremail,
           userphone: this.userInfo.userphone,
@@ -407,6 +450,7 @@ export default {
 
         if (response.status === 200) {
           alert('Dados atualizados com sucesso!');
+          this.fetchUserInfo();
         } else {
           console.error('Erro ao atualizar os dados', response);
           alert('Erro ao atualizar os dados. Tente novamente.');
@@ -417,6 +461,7 @@ export default {
       }
     },
 
+
     logout() {
       localStorage.removeItem('token');
       this.$router.push('/login');
@@ -424,85 +469,13 @@ export default {
   },
 }
 
-const MassageIcon = {
-  template: `
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 20v-6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6"></path>
-        <path d="M12 12V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"></path>
-        <path d="M12 12V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v4"></path>
-      </svg>
-    `
-};
-
 // Navigation state
 const isNavOpen = ref(false);
 const activeTab = ref('profile');
 
 
 
-// Appointments data
-const allAppointments = ref([
-  {
-    id: 1,
-    service: 'Haircut & Styling',
-    serviceType: 'haircut',
-    date: '2025-03-25',
-    time: '10:00 AM',
-    staff: 'Maria Garcia',
-    status: 'Approved',
-    duration: '1 hour',
-    price: '$45',
-    notes: 'Trim about 2 inches and add layers'
-  },
-  {
-    id: 2,
-    service: 'Hair Coloring',
-    serviceType: 'coloring',
-    date: '2025-04-10',
-    time: '2:00 PM',
-    staff: 'John Davis',
-    status: 'Pending',
-    duration: '2 hours',
-    price: '$85',
-    notes: 'Balayage highlights'
-  },
-  {
-    id: 3,
-    service: 'Manicure & Pedicure',
-    serviceType: 'manicure',
-    date: '2025-03-15',
-    time: '11:30 AM',
-    staff: 'Lisa Wong',
-    status: 'Completed',
-    duration: '1.5 hours',
-    price: '$60',
-    notes: ''
-  },
-  {
-    id: 4,
-    service: 'Facial Treatment',
-    serviceType: 'facial',
-    date: '2025-02-28',
-    time: '3:00 PM',
-    staff: 'Robert Johnson',
-    status: 'Cancelled',
-    duration: '1 hour',
-    price: '$75',
-    notes: ''
-  },
-  {
-    id: 5,
-    service: 'Massage Therapy',
-    serviceType: 'massage',
-    date: '2025-04-05',
-    time: '4:30 PM',
-    staff: 'Sarah Miller',
-    status: 'Approved',
-    duration: '1 hour',
-    price: '$90',
-    notes: 'Deep tissue massage'
-  }
-]);
+
 
 // Favorite services
 const favoriteServices = ref([
@@ -642,16 +615,7 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-const getStatusBadgeClass = (status) => {
-  const statusClasses = {
-    'Approved': 'bg-success',
-    'Pending': 'bg-warning',
-    'Completed': 'bg-info',
-    'Cancelled': 'bg-secondary'
-  };
 
-  return statusClasses[status] || 'bg-secondary';
-};
 
 const getServiceIconClass = (type) => {
   const iconClasses = {
