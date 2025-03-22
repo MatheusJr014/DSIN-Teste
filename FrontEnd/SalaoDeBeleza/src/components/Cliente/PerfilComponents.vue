@@ -342,10 +342,10 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-
+import Swal from 'sweetalert2';
 export default {
   data() {
     return {
@@ -391,7 +391,8 @@ export default {
         'Cancelado': 'bg-secondary'
       };
 
-      return statusClasses[status] || 'bg-secondary';
+      return statusClasses[status] || 'bg-secondary bg-opacity-10 text-secondary';
+
     },
 
     async fetchAppointments() {
@@ -460,305 +461,39 @@ export default {
         alert('Erro ao atualizar os dados. Tente novamente.');
       }
     },
+    async deleteAppointment(id) {
+      // Exibe o alerta de confirmação de exclusão
+      const result = await Swal.fire({
+        title: 'Tem certeza?',
+        text: "Você não poderá reverter isso!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sim, excluir!',
+      });
 
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`http://127.0.0.1:8000/api/appointments/${id}`);
 
+          if (response.status === 204) {
+            Swal.fire('Deletado!', 'Seu agendamento foi excluído.', 'success');
+          } else {
+            Swal.fire('Erro!', 'Ocorreu um erro ao excluir o agendamento. Tente novamente.', 'error');
+          }
+        } catch (error) {
+          Swal.fire('Erro!', 'Ocorreu um erro ao excluir o agendamento. Tente novamente.', 'error');
+          console.error('Erro na requisição', error);
+        }
+      }
+    },
     logout() {
       localStorage.removeItem('token');
       this.$router.push('/login');
     },
   },
 }
-
-// Navigation state
-const isNavOpen = ref(false);
-const activeTab = ref('profile');
-
-
-
-
-
-// Favorite services
-const favoriteServices = ref([
-  {
-    id: 1,
-    name: 'Haircut & Styling',
-    type: 'haircut',
-    duration: '1 hour',
-    price: '$45',
-    description: 'Professional haircut and styling by our expert stylists.'
-  },
-  {
-    id: 2,
-    name: 'Manicure & Pedicure',
-    type: 'manicure',
-    duration: '1.5 hours',
-    price: '$60',
-    description: 'Complete nail care for hands and feet.'
-  },
-  {
-    id: 3,
-    name: 'Facial Treatment',
-    type: 'facial',
-    duration: '1 hour',
-    price: '$75',
-    description: 'Rejuvenating facial treatment for all skin types.'
-  }
-]);
-
-// Account settings
-const settings = ref({
-  notifications: {
-    appointments: true,
-    promotions: true,
-    news: false
-  }
-});
-
-// Password change form
-const passwordForm = ref({
-  current: '',
-  new: '',
-  confirm: ''
-});
-
-// Appointment filtering
-const appointmentFilter = ref('all');
-const searchQuery = ref('');
-
-// Modals state
-const showAppointmentModal = ref(false);
-const showRescheduleModal = ref(false);
-const showCancelModal = ref(false);
-const showDeleteConfirmation = ref(false);
-
-// Selected appointment
-const selectedAppointment = ref(null);
-
-// Review state
-const rating = ref(0);
-const reviewText = ref('');
-
-// Reschedule form
-const rescheduleForm = ref({
-  date: '',
-  time: '',
-  reason: ''
-});
-
-// Cancel reason
-const cancelReason = ref('');
-
-// Delete confirmation
-const deleteConfirmation = ref('');
-
-// Available time slots
-const availableTimes = ref([
-  '9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM',
-  '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
-]);
-
-// Computed properties
-const minDate = computed(() => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
-});
-
-const recentAppointments = computed(() => {
-  return allAppointments.value
-    .filter(app => app.status === 'Approved' || app.status === 'Pending')
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .slice(0, 3);
-});
-
-const filteredAppointments = computed(() => {
-  let filtered = [...allAppointments.value];
-
-  // Filter by status
-  if (appointmentFilter.value !== 'all') {
-    const statusMap = {
-      'upcoming': ['Approved', 'Pending'],
-      'pending': ['Pending'],
-      'completed': ['Completed']
-    };
-
-    filtered = filtered.filter(app =>
-      statusMap[appointmentFilter.value]?.includes(app.status)
-    );
-  }
-
-  // Filter by search query
-  if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter(app =>
-      app.service.toLowerCase().includes(query) ||
-      app.staff.toLowerCase().includes(query) ||
-      app.status.toLowerCase().includes(query)
-    );
-  }
-
-  // Sort by date (newest first for completed, soonest first for others)
-  filtered.sort((a, b) => {
-    if (a.status === 'Completed' && b.status === 'Completed') {
-      return new Date(b.date) - new Date(a.date);
-    }
-    return new Date(a.date) - new Date(b.date);
-  });
-
-  return filtered;
-});
-
-// Methods
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-
-
-const getServiceIconClass = (type) => {
-  const iconClasses = {
-    'haircut': 'bg-primary bg-opacity-10 text-primary',
-    'coloring': 'bg-danger bg-opacity-10 text-danger',
-    'facial': 'bg-info bg-opacity-10 text-info',
-    'manicure': 'bg-success bg-opacity-10 text-success',
-    'massage': 'bg-warning bg-opacity-10 text-warning'
-  };
-
-  return iconClasses[type] || 'bg-secondary bg-opacity-10 text-secondary';
-};
-
-const viewAppointment = (appointment) => {
-  selectedAppointment.value = appointment;
-  showAppointmentModal.value = true;
-};
-
-const rescheduleAppointment = (appointment) => {
-  selectedAppointment.value = appointment;
-  rescheduleForm.value = {
-    date: '',
-    time: '',
-    reason: ''
-  };
-  showRescheduleModal.value = true;
-  showAppointmentModal.value = false;
-};
-
-const cancelAppointment = (appointment) => {
-  selectedAppointment.value = appointment;
-  cancelReason.value = '';
-  showCancelModal.value = true;
-  showAppointmentModal.value = false;
-};
-
-const confirmReschedule = () => {
-  // In a real app, you would send this data to your backend
-  console.log('Rescheduling appointment:', {
-    appointmentId: selectedAppointment.value.id,
-    newDate: rescheduleForm.value.date,
-    newTime: rescheduleForm.value.time,
-    reason: rescheduleForm.value.reason
-  });
-
-  // Update the appointment in our local state
-  const index = allAppointments.value.findIndex(app => app.id === selectedAppointment.value.id);
-  if (index !== -1) {
-    allAppointments.value[index].date = rescheduleForm.value.date;
-    allAppointments.value[index].time = rescheduleForm.value.time;
-    allAppointments.value[index].status = 'Pending'; // Reset to pending after reschedule
-  }
-
-  showRescheduleModal.value = false;
-};
-
-const confirmCancel = () => {
-  // In a real app, you would send this data to your backend
-  console.log('Cancelling appointment:', {
-    appointmentId: selectedAppointment.value.id,
-    reason: cancelReason.value
-  });
-
-  // Update the appointment in our local state
-  const index = allAppointments.value.findIndex(app => app.id === selectedAppointment.value.id);
-  if (index !== -1) {
-    allAppointments.value[index].status = 'Cancelled';
-  }
-
-  showCancelModal.value = false;
-};
-
-const submitReview = () => {
-  // In a real app, you would send this data to your backend
-  console.log('Submitting review:', {
-    appointmentId: selectedAppointment.value.id,
-    rating: rating.value,
-    review: reviewText.value
-  });
-
-  // Reset review form
-  rating.value = 0;
-  reviewText.value = '';
-
-  // Close modal
-  showAppointmentModal.value = false;
-};
-
-const changePassword = () => {
-  if (passwordForm.value.new !== passwordForm.value.confirm) {
-    alert('New passwords do not match!');
-    return;
-  }
-
-  // In a real app, you would send this data to your backend
-  console.log('Changing password');
-
-  // Reset form
-  passwordForm.value = {
-    current: '',
-    new: '',
-    confirm: ''
-  };
-
-  alert('Password updated successfully!');
-};
-
-const confirmDeleteAccount = () => {
-  if (deleteConfirmation.value !== 'DELETE') {
-    return;
-  }
-
-  // In a real app, you would send this request to your backend
-  console.log('Deleting account');
-
-  showDeleteConfirmation.value = false;
-  alert('Account deleted successfully!');
-};
-
-const removeFromFavorites = (service) => {
-  favoriteServices.value = favoriteServices.value.filter(s => s.id !== service.id);
-};
-
-const bookService = (service) => {
-  // In a real app, you would navigate to booking page with this service pre-selected
-  console.log('Booking service:', service);
-};
-
-const getNoAppointmentsMessage = () => {
-  const messages = {
-    'all': 'You don\'t have any appointments yet',
-    'upcoming': 'You don\'t have any upcoming appointments',
-    'pending': 'You don\'t have any pending appointments',
-    'completed': 'You don\'t have any completed appointments'
-  };
-
-  return messages[appointmentFilter.value] || 'No appointments found';
-};
-
-// Lifecycle hooks
-onMounted(() => {
-  // Any initialization code
-});
 </script>
 
 <style>
