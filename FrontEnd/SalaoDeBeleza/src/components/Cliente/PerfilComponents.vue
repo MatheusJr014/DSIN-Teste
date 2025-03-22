@@ -28,10 +28,7 @@
                   <user-icon class="me-2" size="18" />
                   Perfil
                 </a>
-                <a href="#" class="list-group-item list-group-item-action" @click.prevent="activeTab = 'settings'">
-                  <settings-icon class="me-2" size="18" />
-                  Configurações de Conta
-                </a>
+
               </div>
 
               <div class="mt-4">
@@ -155,54 +152,7 @@
               </div>
             </div>
           </div>
-
         </div>
-        <!-- Settings Tab -->
-        <!-- <div v-if="activeTab === 'settings'">
-              <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
-                  <h5 class="card-title mb-0 fw-bold">Account Settings</h5>
-                </div>
-                <div class="card-body">
-                  <h6 class="fw-bold mb-3">Email Notifications</h6>
-                  <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="notifyAppointment" v-model="settings.notifications.appointments">
-                    <label class="form-check-label" for="notifyAppointment">Appointment reminders</label>
-                  </div>
-                  <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="notifyPromo" v-model="settings.notifications.promotions">
-                    <label class="form-check-label" for="notifyPromo">Promotions and special offers</label>
-                  </div>
-                  <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="notifyNews" v-model="settings.notifications.news">
-                    <label class="form-check-label" for="notifyNews">News and updates</label>
-                  </div>
-                  
-                  <hr class="my-4">
-                  
-                  <h6 class="fw-bold mb-3">Change Password</h6>
-                  <div class="mb-3">
-                    <label for="currentPassword" class="form-label">Current Password</label>
-                    <input type="password" class="form-control" id="currentPassword" v-model="passwordForm.current">
-                  </div>
-                  <div class="mb-3">
-                    <label for="newPassword" class="form-label">New Password</label>
-                    <input type="password" class="form-control" id="newPassword" v-model="passwordForm.new">
-                  </div>
-                  <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" v-model="passwordForm.confirm">
-                  </div>
-                  <button class="btn btn-primary" @click="changePassword">Update Password</button>
-                  
-                  <hr class="my-4">
-                  
-                  <h6 class="fw-bold mb-3 text-danger">Danger Zone</h6>
-                  <p class="text-muted">Once you delete your account, there is no going back. Please be certain.</p>
-                  <button class="btn btn-outline-danger" @click="showDeleteConfirmation = true">Delete Account</button>
-                </div>
-              </div>
-            </div> -->
       </div>
     </div>
   </div>
