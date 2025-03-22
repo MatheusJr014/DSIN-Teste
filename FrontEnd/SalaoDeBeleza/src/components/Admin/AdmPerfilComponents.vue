@@ -129,6 +129,9 @@
                                                 @click="deleteAppointment(appointment.id)">
                                                 Excluir
                                             </button>
+                                            <button v-if="appointment.appointmentsstatus === 'Pendente'" class="btn btn-success btn-sm" @click="confirmAppointment(appointment.id)">
+                                                Confirmar Chamado
+                                            </button>
                                         </div>
                                     </div>
 
@@ -337,6 +340,7 @@ export default {
 
 
         this.appointments = appointments
+          .filter(appointment => appointment.appointmentsterm === true)
           .map(appointment => ({
             ...appointment,
             service: serviceMap[appointment.appointmentsserviceid] || {}
@@ -388,18 +392,6 @@ export default {
     editAppointment(appointmentId) {
       const appointment = this.appointments.find(a => a.id === appointmentId);
       if (appointment) {
-        const originalDate = new Date(appointment.appointmentsdate); 
-        const today = new Date(); 
-
-
-        
-        const diffDays = (originalDate - today) / (1000 * 60 * 60 * 24);
-
-        if (diffDays <= 1) { 
-          Swal.fire('Alerta', 'O reagendamento não pode ser efetuado entrar em contato com a Leila Beauty ', 'warning');
-          return;
-        }
-
         this.selectedAppointment = { ...appointment };
         const modal = new bootstrap.Modal(document.getElementById('editAppointmentModal'));
         modal.show();
@@ -423,8 +415,40 @@ export default {
         Swal.fire('Erro', 'Ocorreu um erro ao atualizar o agendamento', 'error');
       }
     },
+    async confirmAppointment(appointmentId) {
+    try {
+        // Encontrar o agendamento que será atualizado
+        const appointmentToUpdate = this.appointments.find(appointment => appointment.id === appointmentId);
 
-    async deleteAppointment(id) {
+        if (appointmentToUpdate) {
+        // Enviar uma requisição PUT para atualizar o status e o campo term
+        const response = await axios.put(`http://127.0.0.1:8000/api/appointments/${appointmentId}`, {
+            // Enviar todos os dados do agendamento, mas alterando apenas os campos necessários
+            appointmentsdate: appointmentToUpdate.appointmentsdate,
+            appointmentsorder: appointmentToUpdate.appointmentsorder,
+            appointmentsserviceid: appointmentToUpdate.appointmentsserviceid,
+            appointmentsstatus: 'Confirmado',  // Alterando o status
+            appointmentsterm: false,  // Alterando o campo term
+            appointmentsuserid: appointmentToUpdate.appointmentsuserid,
+        });
+
+        // Atualizar o agendamento localmente
+        this.appointments = this.appointments.map(appointment => {
+            if (appointment.id === appointmentId) {
+            appointment.appointmentsstatus = 'Confirmado';
+            appointment.appointmentsterm = false;
+            }
+            return appointment;
+        });
+
+        console.log('Agendamento confirmado:', response.data);
+        }
+
+    } catch (error) {
+        console.error('Erro ao confirmar o agendamento:', error);
+    }
+    },
+        async deleteAppointment(id) {
       // Exibe o alerta de confirmação de exclusão
       const result = await Swal.fire({
         title: 'Tem certeza?',
