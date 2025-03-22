@@ -123,6 +123,53 @@
               </div>
             </div>
           </div>
+          <!-- Modal Edit Appointment -->
+          <div class="modal fade" id="editAppointmentModal" tabindex="-1" aria-labelledby="editAppointmentModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editAppointmentModalLabel">Editar Agendamento</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form @submit.prevent="updateAppointment">
+                    <div class="mb-3">
+                      <label for="appointmentsdate" class="form-label">Data do Agendamento</label>
+                      <input type="date" class="form-control" id="appointmentsdate"
+                        v-model="selectedAppointment.appointmentsdate" required />
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="appointmentsorder" class="form-label">Ordem de Agendamento</label>
+                      <input type="number" class="form-control" id="appointmentsorder"
+                        v-model="selectedAppointment.appointmentsorder" required />
+                    </div>
+<!-- 
+                    <div class="mb-3">
+                      <label for="appointmentsserviceid" class="form-label">Serviço</label>
+                      <select class="form-control" id="appointmentsserviceid"
+                        v-model="selectedAppointment.appointmentsserviceid">
+                        <option v-for="service in services" :value="service.id" :key="service.id">{{ service.servicetype
+                          }}</option>
+                      </select>
+                    </div> -->
+
+                    <div class="mb-3 form-check">
+                      <input type="checkbox" class="form-check-input" id="appointmentsTerm"
+                        v-model="selectedAppointment.appointmentsterm" />
+                      <label class="form-check-label" for="appointmentsTerm">Aceito os termos</label>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                      <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Appointments Tab -->
@@ -352,6 +399,15 @@ export default {
       userInfo: null,
       appointments: [],
       activeTab: 'profile',
+      selectedAppointment: {
+        id: null,
+        appointmentsdate: '',
+        appointmentsstatus: '',
+        appointmentsorder: '',
+        appointmentsserviceid: null,
+        appointmentsterm: false
+      },
+
     };
   },
   mounted() {
@@ -461,6 +517,32 @@ export default {
         alert('Erro ao atualizar os dados. Tente novamente.');
       }
     },
+    editAppointment(appointmentId) {
+      const appointment = this.appointments.find(a => a.id === appointmentId);
+      if (appointment) {
+        this.selectedAppointment = { ...appointment }; // Copia os dados para o modal
+        const modal = new bootstrap.Modal(document.getElementById('editAppointmentModal'));
+        modal.show();
+      }
+    },
+
+    async updateAppointment() {
+      try {
+        const response = await axios.put(`http://127.0.0.1:8000/api/appointments/${this.selectedAppointment.id}`, this.selectedAppointment);
+        if (response.status === 200) {
+          Swal.fire('Sucesso', 'Agendamento atualizado com sucesso!', 'success');
+          this.fetchAppointments(); // Atualiza a lista de agendamentos
+          const modal = bootstrap.Modal.getInstance(document.getElementById('editAppointmentModal'));
+          modal.hide(); // Fecha o modal após a atualização
+        } else {
+          Swal.fire('Erro', 'Ocorreu um erro ao atualizar o agendamento', 'error');
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar o agendamento:', error);
+        Swal.fire('Erro', 'Ocorreu um erro ao atualizar o agendamento', 'error');
+      }
+    },
+
     async deleteAppointment(id) {
       // Exibe o alerta de confirmação de exclusão
       const result = await Swal.fire({
