@@ -2,7 +2,6 @@
     <div class="login-page">
         <div class="container-fluid p-0 vh-100">
             <div class="row g-0 h-100">
-                <!-- Left side - Login Form -->
                 <div class="col-md-6 d-flex align-items-center justify-content-center">
                     <div class="login-form-container p-4 p-md-5">
                         <div class="text-center mb-4">
@@ -33,10 +32,6 @@
                                         id="password" placeholder="Sua senha" v-model="password" required>
                                 </div>
                             </div>
-                            <div class="mb-4 form-check">
-                                <input type="checkbox" class="form-check-input" id="rememberMe">
-                                <label class="form-check-label" for="rememberMe">Lembrar de mim</label>
-                            </div>
                             <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
                                 <span v-if="!isLoading">Entrar</span>
                                 <div v-else class="spinner-border spinner-border-sm text-light" role="status">
@@ -55,12 +50,37 @@
                         </form>
                     </div>
                 </div>
-
-                <!-- Right side - Image -->
                 <div class="col-md-6 d-none d-md-block">
                     <div class="login-image h-100 d-flex flex-column justify-content-center text-white p-5"
                         style="background-color: #F2F2F2;">
                         <img src="../../assets/images/image.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Cadastro -->
+        <div v-if="showRegisterForm" class="modal d-block">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Criar Conta</h5>
+                        <button type="button" class="btn-close" @click="showRegisterForm = false"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form @submit.prevent="RegisterUser">
+                            <input type="text" class="form-control mb-2" v-model="registerData.username"
+                                placeholder="Nome" required>
+                            <input type="text" class="form-control mb-2" v-model="registerData.usercpf"
+                                placeholder="CPF" required>
+                            <input type="email" class="form-control mb-2" v-model="registerData.useremail"
+                                placeholder="Email" required>
+                            <input type="password" class="form-control mb-2" v-model="registerData.password"
+                                placeholder="Senha" required>
+                            <input type="text" class="form-control mb-2" v-model="registerData.userphone"
+                                placeholder="Telefone" required>
+                            <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -77,78 +97,62 @@ export default {
         return {
             useremail: "",
             password: "",
-            isLoading: false
+            isLoading: false,
+            showRegisterForm: false,
+            registerData: {
+                username: "",
+                usercpf: "",
+                useremail: "",
+                password: "",
+                userphone: "",
+                userstatus: "ativo",
+                role: ""
+            }
         };
     },
     methods: {
         async LoginUser() {
             this.isLoading = true;
-
-            const payload = {
-                useremail: this.useremail,
-                password: this.password,
-            };
-
             try {
-                const response = await fetch(`http://localhost:8000/api/users/login`, {
+                const response = await fetch(`http://127.0.0.1:8000/api/users/login`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ useremail: this.useremail, password: this.password })
                 });
 
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new Error('Credenciais inválidas. Verifique seu email ou senha.');
-                    }
-                    throw new Error(`Erro ao fazer login. Código: ${response.status}`);
-                }
-
+                if (!response.ok) throw new Error('Credenciais inválidas.');
                 const res = await response.json();
-                const token = res.access_token || res.acess_token;
+                const token = res.access_token;
+                if (!token) throw new Error('Token não recebido.');
 
-                if (token) {
-                    const decoded = jwtDecode(token);
-                    const role = decoded.role; 
-
-                    localStorage.setItem('token', token);
-                    localStorage.setItem('role', role);
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login realizado!',
-                        text: 'Redirecionando...',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-
-                        if (role === 'admin') {
-                            this.$router.push('/user/admin');
-                        } else if (role === 'cliente') {
-                            this.$router.push('/user/cliente');
-                        } else {
-                            this.$router.push('/dashboard');
-                        }
-                    });
-                } else {
-                    throw new Error('Token não recebido na resposta.');
-                }
+                const decoded = jwtDecode(token);
+                localStorage.setItem('token', token);
+                localStorage.setItem('role', decoded.role);
+                this.$router.push(decoded.role === 'admin' ? '/user/admin' : '/user/cliente');
             } catch (error) {
-                console.error('Erro na requisição:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro no login',
-                    text: error.message || 'Ocorreu um erro ao tentar fazer login. Tente novamente.',
-                    confirmButtonColor: '#dc3545'
-                });
+                Swal.fire({ icon: 'error', title: 'Erro no login', text: error.message });
             } finally {
                 this.isLoading = false;
+            }
+        },
+        async RegisterUser() {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.registerData)
+                });
+                if (!response.ok) throw new Error('Erro ao criar conta.');
+                Swal.fire({ icon: 'success', title: 'Conta criada com sucesso!', text: 'Você já pode fazer login.' });
+                this.showRegisterForm = false;
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Erro no cadastro', text: error.message });
             }
         }
     }
 };
 </script>
+
 
 <style>
 /* Custom styles */
