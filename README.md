@@ -15,6 +15,7 @@ Projeto realizado como demanda de um teste para a Empresa DSIN.
 - Composer 2.7.7
 - Pacotes Node 20.16.0 
 - Vue Js 3  
+- NPM 
 - PostGreeSQL | PgAdmin 
 
 ## Passo a passo
@@ -71,14 +72,40 @@ php artisan serve
 
 
 ## Instalação Vue Js 
-
-## Usar 
-
-```php
-php artisan serve
+```bash
+cd DSIN-Teste\FrontEnd\SalaoDeBelezFrontEnd 
 ```
 
-> Primeiro Dar o Migrate Fresh 
+## Na pasta do projeto FrontEnd executar o comando abaixo
+```bash
+npm install 
+```
+
+## Rodar o projeto 
+
+```bash
+npm run dev
+```
+
+## Para Rodar os dois projetos ao mesmo tempo é necessario: 
+```bash
+cd DSIN-Teste\BackEnd\SalaoDeBelezaBackEnd 
+```
+
+```bash
+php artisan serve 
+```
+## E 
+
+```bash
+cd DSIN-Teste\FrontEnd\SalaoDeBelezaFrontEnd 
+```
+```bash
+npm run dev 
+```
+
+
+> Primeiro Dar o Migrate  
 > Depois Subir os Seeders 
 
 
