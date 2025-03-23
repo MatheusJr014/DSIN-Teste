@@ -73,7 +73,7 @@ php artisan serve
 
 ## Instalação Vue Js 
 ```bash
-cd DSIN-Teste\FrontEnd\SalaoDeBelezFrontEnd 
+cd DSIN-Teste\FrontEnd\SalaoDeBeleza
 ```
 
 ### Na pasta do projeto FrontEnd executar o comando abaixo
@@ -98,7 +98,7 @@ php artisan serve
 ### E 
 
 ```bash
-cd DSIN-Teste\FrontEnd\SalaoDeBelezaFrontEnd 
+cd DSIN-Teste\FrontEnd\SalaoDeBeleza
 ```
 ```bash
 npm run dev 
