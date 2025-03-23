@@ -76,18 +76,18 @@ php artisan serve
 cd DSIN-Teste\FrontEnd\SalaoDeBelezFrontEnd 
 ```
 
-## Na pasta do projeto FrontEnd executar o comando abaixo
+### Na pasta do projeto FrontEnd executar o comando abaixo
 ```bash
 npm install 
 ```
 
-## Rodar o projeto 
+### Rodar o projeto 
 
 ```bash
 npm run dev
 ```
 
-## Para Rodar os dois projetos ao mesmo tempo é necessario: 
+### Para Rodar os dois projetos ao mesmo tempo é necessario: 
 ```bash
 cd DSIN-Teste\BackEnd\SalaoDeBelezaBackEnd 
 ```
@@ -95,7 +95,7 @@ cd DSIN-Teste\BackEnd\SalaoDeBelezaBackEnd
 ```bash
 php artisan serve 
 ```
-## E 
+### E 
 
 ```bash
 cd DSIN-Teste\FrontEnd\SalaoDeBelezaFrontEnd 
