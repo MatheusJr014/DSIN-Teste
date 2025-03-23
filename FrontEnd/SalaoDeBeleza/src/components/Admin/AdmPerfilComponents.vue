@@ -176,7 +176,7 @@
                     <div v-if="activeTab === 'services'">
                     <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white py-3">
-                        <h5 class="card-title mb-0 fw-bold">Favorite Services</h5>
+                        <h5 class="card-title mb-0 fw-bold">Gerenciar Serviços</h5>
                     </div>
                     <div class="card-body">
                         <div class="row g-4">
