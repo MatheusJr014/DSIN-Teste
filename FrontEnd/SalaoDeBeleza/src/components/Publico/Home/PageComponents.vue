@@ -13,11 +13,6 @@
               Experimente luxo e cuidado no Leila Beauty
             </p>
             <div class="d-flex flex-wrap gap-2">
-              <!-- <button 
-                  class="btn btn-primary btn-lg" 
-                  @click="isLoggedIn ? showAppointmentModal = true : showLoginModal = true">
-                  Agendar Agora!
-                </button> -->
               <a href="#services" class="btn btn-primary btn-lg">Agendar Agora!</a>
               <a href="#services" class="btn btn-outline-secondary btn-lg">Serviços</a>
             </div>
@@ -91,68 +86,37 @@
             <img src="../../../assets/images/image.png" alt="Our Team" class="img-fluid rounded shadow-lg">
           </div>
           <div class="col-lg-6">
-            <h2 class="fw-bold mb-3">About BeautyTime</h2>
+            <h2 class="fw-bold mb-3">Sobre Leila Beauty</h2>
             <p class="mb-4">
-              Founded in 2010, BeautyTime has been providing exceptional beauty services to our clients.
-              Our team of experienced professionals is dedicated to making you look and feel your best.
+              Fundada em 2010, a LeilaBeauty tem fornecido serviços de beleza excepcionais para nossos clientes. Nossa equipe de profissionais experientes é dedicada a fazer você parecer e se sentir o seu melhor.
             </p>
             <div class="d-flex align-items-center mb-3">
               <check-circle-icon class="text-primary me-2" />
-              <span>Certified beauty professionals</span>
+              <span>Profissionais de beleza certificados</span>
             </div>
             <div class="d-flex align-items-center mb-3">
               <check-circle-icon class="text-primary me-2" />
-              <span>Premium quality products</span>
+              <span>Produtos de qualidade premium</span>
             </div>
             <div class="d-flex align-items-center mb-3">
               <check-circle-icon class="text-primary me-2" />
-              <span>Relaxing and luxurious environment</span>
+              <span>Ambiente relaxante e luxuoso</span>
             </div>
             <div class="d-flex align-items-center">
               <check-circle-icon class="text-primary me-2" />
-              <span>Convenient online booking system</span>
+              <span>Sistema de reserva on-line conveniente</span>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- Testimonials -->
-    <section class="py-5">
-      <div class="container">
-        <div class="text-center mb-5">
-          <h2 class="fw-bold">What Our Clients Say</h2>
-          <p class="text-muted">Read testimonials from our satisfied customers</p>
-        </div>
-        <div class="row g-4">
-          <div class="col-md-4" v-for="(testimonial, index) in testimonials" :key="index">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-body">
-                <div class="d-flex mb-3">
-                  <star-icon class="text-warning" v-for="n in 5" :key="n" />
-                </div>
-                <p class="card-text mb-3">{{ testimonial.comment }}</p>
-                <div class="d-flex align-items-center">
-                  <img :src="testimonial.avatar" alt="Client" class="rounded-circle me-3" width="50" height="50">
-                  <div>
-                    <h6 class="mb-0 fw-bold">{{ testimonial.name }}</h6>
-                    <small class="text-muted">{{ testimonial.title }}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- Contact Section -->
     <section id="contact" class="py-5 bg-light">
       <div class="container">
         <div class="row g-4">
           <div class="col-lg-6">
-            <h2 class="fw-bold mb-4">Contact Us</h2>
-            <p class="mb-4">Have questions? Get in touch with us!</p>
+            <h2 class="fw-bold mb-4">Entre em Contato com a Leila</h2>
+            <p class="mb-4">Tem duvidas? Entre em contato Já!</p>
 
             <div class="d-flex align-items-center mb-3">
               <map-pin-icon class="text-primary me-3" />
@@ -178,10 +142,10 @@
           <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
               <div class="card-body p-4">
-                <h5 class="card-title fw-bold mb-3">Send us a message</h5>
+                <h5 class="card-title fw-bold mb-3">Contacte Já</h5>
                 <form>
                   <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">Nome</label>
                     <input type="text" class="form-control" id="name" placeholder="Your name">
                   </div>
                   <div class="mb-3">
@@ -189,10 +153,10 @@
                     <input type="email" class="form-control" id="email" placeholder="Your email">
                   </div>
                   <div class="mb-3">
-                    <label for="message" class="form-label">Message</label>
+                    <label for="message" class="form-label">Mensagem</label>
                     <textarea class="form-control" id="message" rows="4" placeholder="Your message"></textarea>
                   </div>
-                  <button type="submit" class="btn btn-primary">Send Message</button>
+                  <button type="submit" class="btn btn-primary">Enviar mensagem</button>
                 </form>
               </div>
             </div>
